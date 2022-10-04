@@ -1,7 +1,7 @@
 # Java-Solitaire
 A solitaire game written in Java
 
-As of the current moment we are complete part 7. I have made as many changes as I could and have noted as many in this area as possible.
+As of the current moment we are complete up to part 7. I have made as many changes as I could and have noted as many in this area as possible.
 
 The changes are as follows:
 
