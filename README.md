@@ -30,4 +30,4 @@ Card.java-
 getFoundationBase() -> getFoundation()
 getCardBack() -> getBack()
 
-Furthermore, many variable names have been changed and some reverse rebasing has been done. Please do not change this back to what is in the video, it will help us in the end.
+Furthermore, many variable names have been changed and some reverse rebasing has been done. Please do not change this back, it will help us in the end.
