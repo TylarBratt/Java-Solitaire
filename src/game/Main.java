@@ -15,8 +15,6 @@ public class Main extends JFrame{
 	public static final int WINDOW_HEIGHT = 600;
 
 	public Main() {
-
-
 		//This is the main constructor for the game. It gets called immediately on start up,
 		// it sets the default close operation to actually close the JFrame window. 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

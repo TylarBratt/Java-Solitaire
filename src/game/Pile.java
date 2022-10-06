@@ -1,5 +1,6 @@
 package game;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 import javax.swing.JPanel;
@@ -19,6 +20,15 @@ public class Pile extends JPanel{
 		super.setLocation(position_x, position_y);
 		cards = new Stack<>();
 	}
+	
+	public Card pop() {
+		try {
+	
+		return cards.pop();
+	}catch(EmptyStackException e) {
+		return null;
+	}
+		}
 	
 	public void push(Card someCard) {
 		this.cards.push(someCard);
