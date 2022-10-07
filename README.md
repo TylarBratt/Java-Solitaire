@@ -1,7 +1,7 @@
 # Java-Solitaire
 A solitaire game written in Java
 
-As of the current moment we are complete up to part 7. I have made as many changes as I could and have noted as many in this area as possible.
+As of the current moment we have completed all part until 15. I have made as many changes as I could and have noted as many in this area as possible.
 
 The changes are as follows:
 
@@ -31,3 +31,16 @@ getFoundationBase() -> getFoundation()
 getCardBack() -> getBack()
 
 Furthermore, many variable names have been changed and some reverse rebasing has been done. Please do not change this back, it will help us in the end.
+
+
+Method name in Card.java:
+
+cardFile -> fileCards 
+getCardImage -> getImageCard 
+
+Class Name: 
+
+GameMoveListener -> CardMoveListener 
+
+Also, many of the variable names have been changed.
+
