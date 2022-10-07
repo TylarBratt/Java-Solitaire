@@ -27,6 +27,9 @@ public class Background extends JPanel{
 		initializePiles();
 		
 		
+		CardMoveListener game = new CardMoveListener();
+		addMouseListener(game);
+		addMouseMotionListener(game);
 	}
 
 	private void initializePiles() {
@@ -47,6 +50,20 @@ public class Background extends JPanel{
 	}
 
 	
+	
+	
+	
+	
+	public static Foundation[] getFoundation() {
+		return foundation;
+	}
+
+	public static TalonPile getTpPile() {
+		return tp;
+	}
+	
+	
+
 	public static StockPile getStockPile() {
 		return sp;
 	}

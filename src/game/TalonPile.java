@@ -16,7 +16,14 @@ public class TalonPile extends Pile{
 	
 	protected void paintComponent(Graphics a) {
 		super.paintComponent(a);
-		a.drawImage(Card.getCardOutline(), 0, 0, 84, this.getHeight(), this);
+		
+		if(this.noCard()) {
+			a.drawImage(Card.getCardOutline(),0,0,84, this.getHeight(), this);
+		}
+		else {
+			a.drawImage(this.topCard().getImageCard(), 0, 0, 84, this.getHeight(), this);
+		}
+		
 	}
 	
 
