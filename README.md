@@ -1,8 +1,6 @@
 # Java-Solitaire
 A solitaire game written in Java
 
-As of the current moment we have completed all part until 15. I have made as many changes as I could and have noted as many in this area as possible.
-
 The changes are as follows:
 
 Class Name changes-
