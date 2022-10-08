@@ -21,6 +21,15 @@ public class Pile extends JPanel{
 		cards = new Stack<>();
 	}
 	
+	public Card topCard()
+	{
+		if(!this.cards.isEmpty()) {
+			return this.cards.peek();	
+		}
+		
+		return null;
+	}	
+	
 	public Card pop() {
 		try {
 	
