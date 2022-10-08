@@ -2,6 +2,12 @@ package game;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+import solitaire.Card;
+import solitaire.Tableau;
+
 import java.awt.Color;
 //import java.awt.GradientPaint;
 
@@ -98,16 +104,28 @@ public class Tableau extends Pile{
 		return false;
 	}
 
-	public void moveTo(Tableau dest, Card card) {
-		
-		if(dest.accepts(card)) {
-			dest.push(this.pop());
+	
+	
+	public void moveTo(Tableau destination, Card card) {
+		if (!this.noCard() || card.getValue() == 13) {
+			if (destination.accepts(card)) {
+                 Deque<Card> toBeMovedCards = new ArrayDeque<>();
+                 while(!this.noCard()) {
+                	 Card tmp = this.pop();
+                	 toBeMovedCards.push(tmp);
+                	 if(tmp.equals(card)) {
+                		 break;
+                	 }
+                 }
+                 while(!toBeMovedCards.isEmpty()) {
+                	 destination.push(toBeMovedCards.pop());
+                 }
+			}
 		}
 		
 		if(!this.noCard()) {
 			this.topCard().showFace();
 		}
-		
-	}	
+	}
 	
 }
