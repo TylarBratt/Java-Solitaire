@@ -48,6 +48,11 @@ public class CardMoveListener extends MouseInputAdapter {
 				tp.push(sp.pop());
 				tp.topCard().showFace();
 			}
+			else {
+				TalonPile tp = Background.getTpPile();
+				System.out.println("Stock pile is empty");
+				sp.takeTalon(tp);
+			}
 		}
 		
 		else if(pressed instanceof TalonPile) {

@@ -29,7 +29,13 @@ public class StockPile extends Pile{
 		Collections.shuffle(cards);
 	}
 
-	
+	public void takeTalon(TalonPile talonPile) {
+		int talonPileSize = talonPile.cards.size();
+		for ( int i = 0; i < talonPileSize; i++ ) {
+			Card card = talonPile.pop();
+			this.cards.addElement(card);
+		}
+	}
 	
 	public void paintComponent(Graphics a) {
 		super.paintComponent(a);
