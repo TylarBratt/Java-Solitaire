@@ -14,6 +14,10 @@ public class TalonPile extends Pile{
 		super.setSize(84, 112);
 	}
 	
+	public void receiveCard(Card stockCard) {
+		this.cards.add(stockCard);
+	}
+
 	protected void paintComponent(Graphics a) {
 		super.paintComponent(a);
 		
