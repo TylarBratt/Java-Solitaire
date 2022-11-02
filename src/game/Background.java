@@ -76,7 +76,7 @@ public class Background extends JPanel{
 	@Override
 	protected void paintComponent(Graphics a) {
 		super.paintComponent(a);
-		a.setColor(Color.green);
+		a.setColor(Color.cyan);
 		a.fillRect(0,0,this.getWidth(), this.getHeight());
 	}
 }
