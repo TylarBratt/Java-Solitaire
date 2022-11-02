@@ -5,8 +5,8 @@ import java.awt.Graphics2D;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import solitaire.Card;
-import solitaire.Tableau;
+import game.Card;
+import game.Tableau;
 
 import java.awt.Color;
 //import java.awt.GradientPaint;
