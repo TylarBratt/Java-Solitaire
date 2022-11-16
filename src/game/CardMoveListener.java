@@ -34,6 +34,8 @@ public class CardMoveListener extends MouseInputAdapter {
 			card = tableaucard.getTableauCardClick(e.getY() - 150);
 			for(Foundation foundation : Background.getFoundation()) {
 				if(tableaucard.moveTo(foundation, card)) {
+					Background.checkWinState(Background.getFoundation());
+					System.out.println("in line 38");
 					tableaucard = null;
 					break;
 				}
@@ -63,6 +65,8 @@ public class CardMoveListener extends MouseInputAdapter {
 			if(card != null) {
 				for(Foundation foundation : Background.getFoundation()) {
 					foundation.moveWaste(tp, card);
+					Background.checkWinState(Background.getFoundation());
+					System.out.println("in line 69 - from talon to foundation");
 				}
 			}
 		}
@@ -99,6 +103,8 @@ public class CardMoveListener extends MouseInputAdapter {
 					src.moveTo(dest, card);
 					src.repaint();
 					dest.repaint();
+					Background.checkWinState(Background.getFoundation());
+					System.out.println("in line 107");
 				}
 			}
 		}

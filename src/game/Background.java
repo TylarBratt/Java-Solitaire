@@ -3,8 +3,10 @@ package game;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
+import java.awt.Dimension;
 
 import javax.swing.JPanel;
+import javax.swing.JButton;
 
 public class Background extends JPanel{
 
@@ -19,17 +21,30 @@ public class Background extends JPanel{
 	public static int TABLEAU_OFFSET = 100;
 	private static StockPile sp;
 	private static TalonPile tp;
-	
+	private static GameTimer gameTimer;
+
 	private static Foundation[] foundation;
 	private static Tableau[] tableau;
 	public Background() {
 		super.setLayout(null);
 		initializePiles();
-		
+		initializeGameTimer();
 		
 		CardMoveListener game = new CardMoveListener();
 		addMouseListener(game);
 		addMouseMotionListener(game);
+		checkWinState(getFoundation());
+
+	}
+
+	private void initializeGameTimer() {
+		gameTimer = new GameTimer("Time challenge", 625, 550, 125, 50, 0);
+		// JButton jbtn = new JButton("Starting Timer...");
+		// jbtn.setPreferredSize(new Dimension(125, 50));
+		// jbtn.setBounds(625, 550, 125, 50);
+		// add(jbtn);
+		// System.out.println("added jbutton");
+		add(gameTimer);
 	}
 
 	private void initializePiles() {
@@ -48,12 +63,7 @@ public class Background extends JPanel{
 			add(tableau[k - 1]);
 		}
 	}
-
-	
-	
-	
-	
-	
+		
 	public static Foundation[] getFoundation() {
 		return foundation;
 	}
@@ -62,17 +72,30 @@ public class Background extends JPanel{
 		return tp;
 	}
 	
-	
 
 	public static StockPile getStockPile() {
 		return sp;
 	}
 	
-	
-	
-	
-	
-	
+	public static boolean checkWinState(Foundation[] foundations) {
+		int completeFoundations = 0;
+		for ( int i=0; i<4; i++ ) {
+			Foundation currentFoundation = foundations[i];
+			int foundationSize = currentFoundation.cards.size();
+			if ( foundationSize == 13 ) {
+				completeFoundations++;
+			}
+			System.out.println(currentFoundation.cards.size());
+		}
+		if ( completeFoundations==4 ) {
+			System.out.println("You won!");
+			return true;
+		}
+		else {
+			System.out.println("You haven't won yet");
+			return true;
+		} 
+	}
 	@Override
 	protected void paintComponent(Graphics a) {
 		super.paintComponent(a);
