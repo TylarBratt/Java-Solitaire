@@ -61,7 +61,6 @@ public class Main extends JFrame implements KeyListener {
 			bg = new Background();
 			remove(Main.st);
 			add(bg);
-			
 			revalidate();
 		} else if (a == j) {
 			//sc = new Score();

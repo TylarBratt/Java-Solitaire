@@ -10,6 +10,7 @@ public class CardMoveListener extends MouseInputAdapter {
 	
 	private StockPile sp = Background.getStockPile();
 	private TalonPile tp = null;
+	private WinPanel wp = null;
 	private Card card = null;
 	private Tableau tableaucard = null;
 	private Foundation foundationPile = null;
@@ -34,9 +35,12 @@ public class CardMoveListener extends MouseInputAdapter {
 			card = tableaucard.getTableauCardClick(e.getY() - 150);
 			for(Foundation foundation : Background.getFoundation()) {
 				if(tableaucard.moveTo(foundation, card)) {
-					Background.checkWinState(Background.getFoundation());
-					System.out.println("in line 38");
 					tableaucard = null;
+					boolean playerWon = Background.checkWinState(Background.getFoundation());
+					System.out.println("playerWon: " + playerWon);
+					if ( playerWon ) {
+						wp.setVisible(true);
+					}
 					break;
 				}
 			}
@@ -60,13 +64,17 @@ public class CardMoveListener extends MouseInputAdapter {
 		else if(pressed instanceof TalonPile) {
 			
 			tableaucard = null;
+			wp = Background.getWinPanel();
 			tp = Background.getTpPile();
 			card = tp.topCard();
 			if(card != null) {
 				for(Foundation foundation : Background.getFoundation()) {
 					foundation.moveWaste(tp, card);
-					Background.checkWinState(Background.getFoundation());
-					System.out.println("in line 69 - from talon to foundation");
+					boolean playerWon = Background.checkWinState(Background.getFoundation());
+					System.out.println("playerWon: " + playerWon);
+					if ( playerWon ) {
+						wp.setVisible(true);
+					}
 				}
 			}
 		}
@@ -103,7 +111,7 @@ public class CardMoveListener extends MouseInputAdapter {
 					src.moveTo(dest, card);
 					src.repaint();
 					dest.repaint();
-					Background.checkWinState(Background.getFoundation());
+					//Background.checkWinState(Background.getFoundation());
 					System.out.println("in line 107");
 				}
 			}

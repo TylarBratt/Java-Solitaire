@@ -8,7 +8,9 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 
-public class Background extends JPanel{
+import javax.swing.*;  
+
+public class Background extends JLayeredPane{
 
 	/**
 	 * This class draws a green background on the window. 
@@ -22,28 +24,21 @@ public class Background extends JPanel{
 	private static StockPile sp;
 	private static TalonPile tp;
 	private static GameTimer gameTimer;
-
+	private static WinPanel wp;
 	private static Foundation[] foundation;
 	private static Tableau[] tableau;
 	public Background() {
 		super.setLayout(null);
 		initializePiles();
 		initializeGameTimer();
-		
+		initializeWinPanel();
 		CardMoveListener game = new CardMoveListener();
 		addMouseListener(game);
 		addMouseMotionListener(game);
-		checkWinState(getFoundation());
-
 	}
 
 	private void initializeGameTimer() {
 		gameTimer = new GameTimer("Time challenge", 625, 550, 125, 50, 0);
-		// JButton jbtn = new JButton("Starting Timer...");
-		// jbtn.setPreferredSize(new Dimension(125, 50));
-		// jbtn.setBounds(625, 550, 125, 50);
-		// add(jbtn);
-		// System.out.println("added jbutton");
 		add(gameTimer);
 	}
 
@@ -77,6 +72,10 @@ public class Background extends JPanel{
 		return sp;
 	}
 	
+	public static WinPanel getWinPanel() {
+		return wp;
+	}
+
 	public static boolean checkWinState(Foundation[] foundations) {
 		int completeFoundations = 0;
 		for ( int i=0; i<4; i++ ) {
@@ -93,9 +92,18 @@ public class Background extends JPanel{
 		}
 		else {
 			System.out.println("You haven't won yet");
-			return true;
+			return false;
 		} 
 	}
+
+	public void initializeWinPanel() {
+		wp = new WinPanel("You won!", 400, 300, 125, 50, 0);
+		add(wp, new Integer(1) );
+		wp.setVisible(false);
+		//wp.getWinPanel();
+		System.out.println("Added win panel");
+	}
+
 	@Override
 	protected void paintComponent(Graphics a) {
 		super.paintComponent(a);
