@@ -44,7 +44,8 @@ public class Foundation extends Pile{
 	public boolean accepts(Card card) {
 
 		if(!this.noCard()) {
-			return this.topCard().getValue() == card.getValue() - 1 && this.topCard().getSuit().equals(card.getSuit());
+			boolean result = this.topCard().getValue() == card.getValue() - 1 && this.topCard().getSuit().equals(card.getSuit());
+			return result;
 		}
 		return card.getValue() == 1  && intToSuit(card.getSuit());
 	}

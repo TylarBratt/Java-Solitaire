@@ -36,7 +36,7 @@ public class CardMoveListener extends MouseInputAdapter {
 			tp = null;
 			card = tableaucard.getTableauCardClick(e.getY() - 150);
 			for(Foundation foundation : Background.getFoundation()) {
-				if(tableaucard.moveTo(foundation, card)) {
+				if(tableaucard.moveTo(foundation, card) && card==tableaucard.topCard()) {
 					tableaucard = null;
 					break;
 					

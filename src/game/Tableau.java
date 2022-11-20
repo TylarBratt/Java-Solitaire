@@ -66,10 +66,10 @@ public class Tableau extends Pile{
 	}
 
 	public boolean accepts(Card card) {
-	
 		if(!this.noCard()) {
-			return this.topCard().getValue() == card.getValue() + 1 &&
-						!this.topCard().getColor().equals(card.getColor());
+			boolean result = this.topCard().getValue() == card.getValue() + 1 &&
+			!this.topCard().getColor().equals(card.getColor());
+			return result;
 		}
 		return card.getValue() == 13;
 	}
@@ -93,8 +93,10 @@ public class Tableau extends Pile{
 	public boolean moveTo(Foundation dest, Card card) {
 		
 		if(dest.accepts(card)) {
-			dest.push(this.pop());
-			
+			//check to make sure card clicked is available to move to foundation
+			if ( card == this.topCard()) {
+				dest.push(this.pop());
+			}
 			if(!this.noCard()) {
 				this.topCard().showFace();
 			}
@@ -107,25 +109,25 @@ public class Tableau extends Pile{
 	
 	
 	public void moveTo(Tableau destination, Card card) {
-		if (!this.noCard() || card.getValue() == 13) {
-			if (destination.accepts(card)) {
-                 Deque<Card> toBeMovedCards = new ArrayDeque<>();
-                 while(!this.noCard()) {
-                	 Card tmp = this.pop();
-                	 toBeMovedCards.push(tmp);
-                	 if(tmp.equals(card)) {
-                		 break;
-                	 }
-                 }
-                 while(!toBeMovedCards.isEmpty()) {
-                	 destination.push(toBeMovedCards.pop());
-                 }
-			}
-		}
-		
-		if(!this.noCard()) {
-			this.topCard().showFace();
-		}
-	}
-	
+			if (!this.noCard() || card.getValue() == 13) {
+			     if (destination.accepts(card)) {
+                      Deque<Card> toBeMovedCards = new ArrayDeque<>();
+                      while(!this.noCard()) {
+                	      Card tmp = this.pop();
+                	      toBeMovedCards.push(tmp);
+                	      if(tmp.equals(card)) {
+                		    break;
+                	      }
+                      }
+                      while(!toBeMovedCards.isEmpty()) {
+                	      destination.push(toBeMovedCards.pop());
+                      
+					  }
+			     }
+		     }
+		     if(!this.noCard()) {
+			     this.topCard().showFace();
+		     }
+     }
+	 
 }
