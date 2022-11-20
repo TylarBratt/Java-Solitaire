@@ -13,7 +13,7 @@ public class Main extends JFrame implements KeyListener {
 	private static final long serialVersionUID = 1L;
 	
 	static protected Start st;
-	static protected Background bg;
+	static protected Background bg = null;
 	public static final int WINDOW_WIDTH = 750;
 	public static final int WINDOW_HEIGHT = 600;
 	static protected boolean playerWon = false;
@@ -58,17 +58,29 @@ public class Main extends JFrame implements KeyListener {
 		
 		//System.out.println("The Key Pressed was: " + a);
 		if(a == start) {
-			remove(st);
-			
-			bg = new Background();
-			remove(Main.st);
-			add(bg);
-			revalidate();
+			if (  bg == null ) {
+				remove(st);
+				
+				bg = new Background();
+				remove(Main.st);
+				add(bg);
+				revalidate();
 
-			mainCardMoveListener = new CardMoveListener();
-			bg.addMouseListener(mainCardMoveListener);
-			bg.addMouseMotionListener(mainCardMoveListener);
+				mainCardMoveListener = new CardMoveListener();
+				bg.addMouseListener(mainCardMoveListener);
+				bg.addMouseMotionListener(mainCardMoveListener);
+			}
+			else {
+				remove(bg);
+				bg = new Background();
+				remove(Main.st);
+				add(bg);
+				revalidate();
 
+				mainCardMoveListener = new CardMoveListener();
+				bg.addMouseListener(mainCardMoveListener);
+				bg.addMouseMotionListener(mainCardMoveListener);
+			}
 		} else if (a == j) {
 			//sc = new Score();
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {

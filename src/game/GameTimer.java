@@ -8,6 +8,8 @@ public class GameTimer extends JButton implements ActionListener {
     int seconds = 0;
     int minutes = 0;
     int hours = 0;
+    Timer swingtimer = new Timer(1000,this);
+    String currentTime;
     //private JButton jbtn; //creation of button inside the JFrame window
     
     public GameTimer(String text, int position_x, int position_y, int width, int height, int tm) {
@@ -24,7 +26,7 @@ public class GameTimer extends JButton implements ActionListener {
 	}
     
     private void setTimer() {
-        Timer swingtimer = new Timer(1000,this);
+        //Timer swingtimer = new Timer(1000,this);
         swingtimer.start();
     }
 
@@ -38,7 +40,18 @@ public class GameTimer extends JButton implements ActionListener {
                 hours++;
             }
         }
-        setText(pad(hours, 2) + ":" + pad(minutes, 2) + ":" + pad(seconds, 2)); //changing the label of button as the timer decreases
+        currentTime = pad(hours, 2) + ":" + pad(minutes, 2) + ":" + pad(seconds, 2);
+        setText(currentTime); //changing the label of button as the timer decreases
+    }
+
+    public void stopTimer() {
+        //Timer swingtimer = new Timer(1000,this);
+        swingtimer.stop();
+    }
+
+    public String getCurrentTime() {
+        System.out.print("GameTimer current time: " + currentTime);
+        return currentTime;
     }
 
     private String pad(int num, int size) {

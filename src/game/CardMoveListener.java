@@ -15,6 +15,7 @@ public class CardMoveListener extends MouseInputAdapter {
 	private Tableau tableaucard = null;
 	private Foundation foundationPile = null;
 	public boolean listenerPlayerWon = false; 
+	private GameTimer gameTimer;
 
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -61,7 +62,6 @@ public class CardMoveListener extends MouseInputAdapter {
 		else if(pressed instanceof TalonPile) {
 			
 			tableaucard = null;
-			wp = Background.getWinPanel();
 			tp = Background.getTpPile();
 			card = tp.topCard();
 			if(card != null) {
@@ -129,7 +129,10 @@ public class CardMoveListener extends MouseInputAdapter {
 		}
 		if ( completeFoundations==4 ) {
 			System.out.println("You won!");
-			wp = new WinPanel("You won!", 275, 300, 200, 100, 0);
+			gameTimer = Background.getGameTimer();
+			gameTimer.stopTimer();
+			String playerTime = gameTimer.getCurrentTime();
+			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 275, 300, 250, 125, 0);
 			pressed.getParent().add(wp);
 			return true;	
 		}
