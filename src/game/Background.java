@@ -34,7 +34,9 @@ public class Background extends JLayeredPane{
 		super.setLayout(null);
 		initializePiles();
 		initializeGameTimer();
-		//initializeWinPanel();
+		game = new CardMoveListener();
+		addMouseListener(game);
+		addMouseMotionListener(game);
 	}
 
 	private void initializeGameTimer() {
@@ -75,25 +77,6 @@ public class Background extends JLayeredPane{
 	public static GameTimer getGameTimer() {
 		return gameTimer;
 	}
-
-	// public static WinPanel getWinPanel() {
-	// 	return wp;
-	// }
-
-	// public void initializeWinPanel() {
-	// 	wp = new WinPanel("You won!", 275, 200, 200, 100, 0);
-	// 	//add(wp, new Integer(-1) );
-	// 	moveToBack(wp);
-	// 	wp.setVisible(false);
-	// 	System.out.println("Added win panel");
-	// }
-
-	// public void showWinPanel() {
-	// 	wp = new WinPanel("You won!", 275, 200, 200, 100, 0);
-	// 	//add(wp, new Integer(-1) );
-	// 	add(wp);
-	// 	wp.setVisible(false);
-	// }
 
 	@Override
 	protected void paintComponent(Graphics a) {

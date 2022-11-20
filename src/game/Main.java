@@ -58,17 +58,13 @@ public class Main extends JFrame implements KeyListener {
 		
 		//System.out.println("The Key Pressed was: " + a);
 		if(a == start) {
+			//determine if you are coming from start screen or end of a game
 			if (  bg == null ) {
 				remove(st);
-				
 				bg = new Background();
 				remove(Main.st);
 				add(bg);
 				revalidate();
-
-				mainCardMoveListener = new CardMoveListener();
-				bg.addMouseListener(mainCardMoveListener);
-				bg.addMouseMotionListener(mainCardMoveListener);
 			}
 			else {
 				remove(bg);
@@ -76,10 +72,6 @@ public class Main extends JFrame implements KeyListener {
 				remove(Main.st);
 				add(bg);
 				revalidate();
-
-				mainCardMoveListener = new CardMoveListener();
-				bg.addMouseListener(mainCardMoveListener);
-				bg.addMouseMotionListener(mainCardMoveListener);
 			}
 		} else if (a == j) {
 			//sc = new Score();
