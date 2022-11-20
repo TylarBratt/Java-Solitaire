@@ -28,10 +28,7 @@ public class WinPanel extends JButton{
         setPreferredSize(new Dimension(width, height));
         setBounds(position_x, position_y, width, height);
         setText(text);
-        // JButton jbtn = new JButton("Starting Timer...");
-		// jbtn.setPreferredSize(new Dimension(width, height));
-		// jbtn.setBounds(position_x, position_y, width, height);
-		// this.add(jbtn);
+		setBackground(Color.pink);
 		System.out.println("added Win Button");
 	}
 

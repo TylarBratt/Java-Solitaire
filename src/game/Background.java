@@ -27,14 +27,14 @@ public class Background extends JLayeredPane{
 	private static WinPanel wp;
 	private static Foundation[] foundation;
 	private static Tableau[] tableau;
+	public CardMoveListener game;
+	public static boolean playerWon = false;
+
 	public Background() {
 		super.setLayout(null);
 		initializePiles();
 		initializeGameTimer();
 		initializeWinPanel();
-		CardMoveListener game = new CardMoveListener();
-		addMouseListener(game);
-		addMouseMotionListener(game);
 	}
 
 	private void initializeGameTimer() {
@@ -76,32 +76,19 @@ public class Background extends JLayeredPane{
 		return wp;
 	}
 
-	public static boolean checkWinState(Foundation[] foundations) {
-		int completeFoundations = 0;
-		for ( int i=0; i<4; i++ ) {
-			Foundation currentFoundation = foundations[i];
-			int foundationSize = currentFoundation.cards.size();
-			if ( foundationSize == 13 ) {
-				completeFoundations++;
-			}
-			System.out.println(currentFoundation.cards.size());
-		}
-		if ( completeFoundations==4 ) {
-			System.out.println("You won!");
-			return true;
-		}
-		else {
-			System.out.println("You haven't won yet");
-			return false;
-		} 
+	public void initializeWinPanel() {
+		wp = new WinPanel("You won!", 275, 200, 200, 100, 0);
+		//add(wp, new Integer(-1) );
+		moveToBack(wp);
+		wp.setVisible(false);
+		System.out.println("Added win panel");
 	}
 
-	public void initializeWinPanel() {
-		wp = new WinPanel("You won!", 400, 300, 125, 50, 0);
-		add(wp, new Integer(1) );
+	public void showWinPanel() {
+		wp = new WinPanel("You won!", 275, 200, 200, 100, 0);
+		//add(wp, new Integer(-1) );
+		add(wp);
 		wp.setVisible(false);
-		//wp.getWinPanel();
-		System.out.println("Added win panel");
 	}
 
 	@Override

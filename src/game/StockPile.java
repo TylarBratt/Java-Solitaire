@@ -25,8 +25,8 @@ public class StockPile extends Pile{
 				System.out.println("Pushed into deck " + card);
 			}
 		}
-		
-		Collections.shuffle(cards);
+		//enable shuffle in production mode
+		//Collections.shuffle(cards);
 	}
 
 	public void takeTalon(TalonPile talonPile) {

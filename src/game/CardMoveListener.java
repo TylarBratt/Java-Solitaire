@@ -14,12 +14,13 @@ public class CardMoveListener extends MouseInputAdapter {
 	private Card card = null;
 	private Tableau tableaucard = null;
 	private Foundation foundationPile = null;
-	
+	public boolean listenerPlayerWon = false; 
+
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
-		
+
 		if(pressed instanceof Foundation) {
 			
 			foundationPile = (Foundation) pressed;
@@ -36,12 +37,8 @@ public class CardMoveListener extends MouseInputAdapter {
 			for(Foundation foundation : Background.getFoundation()) {
 				if(tableaucard.moveTo(foundation, card)) {
 					tableaucard = null;
-					boolean playerWon = Background.checkWinState(Background.getFoundation());
-					System.out.println("playerWon: " + playerWon);
-					if ( playerWon ) {
-						wp.setVisible(true);
-					}
 					break;
+					
 				}
 			}
 		}
@@ -69,18 +66,15 @@ public class CardMoveListener extends MouseInputAdapter {
 			card = tp.topCard();
 			if(card != null) {
 				for(Foundation foundation : Background.getFoundation()) {
-					foundation.moveWaste(tp, card);
-					boolean playerWon = Background.checkWinState(Background.getFoundation());
-					System.out.println("playerWon: " + playerWon);
-					if ( playerWon ) {
-						wp.setVisible(true);
-					}
+					foundation.moveWaste(tp, card);					
 				}
 			}
 		}
 		
 		
 		e.getComponent().repaint();
+
+		checkWinState(Background.getFoundation(), pressed);
 	}
 
 	@Override
@@ -111,8 +105,6 @@ public class CardMoveListener extends MouseInputAdapter {
 					src.moveTo(dest, card);
 					src.repaint();
 					dest.repaint();
-					//Background.checkWinState(Background.getFoundation());
-					System.out.println("in line 107");
 				}
 			}
 		}
@@ -124,7 +116,27 @@ public class CardMoveListener extends MouseInputAdapter {
 		tableaucard = null;
 		tp = null;
 	}
-	
-	
+
+	public boolean checkWinState(Foundation[] foundations, Component pressed) {
+		int completeFoundations = 0;
+		for ( int i=0; i<4; i++ ) {
+			Foundation currentFoundation = foundations[i];
+			int foundationSize = currentFoundation.cards.size();
+			if ( foundationSize == 13 ) {
+				completeFoundations++;
+			}
+			System.out.println(currentFoundation.cards.size());
+		}
+		if ( completeFoundations==4 ) {
+			System.out.println("You won!");
+			wp = new WinPanel("You won!", 275, 300, 200, 100, 0);
+			pressed.getParent().add(wp);
+			return true;	
+		}
+		else {
+			System.out.println("You haven't won yet");
+			return false;
+		} 
+	}
 
 }
