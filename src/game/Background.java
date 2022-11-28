@@ -29,6 +29,7 @@ public class Background extends JLayeredPane{
 	private static Tableau[] tableau;
 	public CardMoveListener game;
 	public static boolean playerWon = false;
+	
 
 	public Background() {
 		super.setLayout(null);

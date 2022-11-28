@@ -16,9 +16,12 @@ public class Main extends JFrame implements KeyListener {
 	static protected Background bg = null;
 	public static final int WINDOW_WIDTH = 750;
 	public static final int WINDOW_HEIGHT = 600;
-	static protected boolean playerWon = false;
+	static public boolean playerWon = false;
+	static public int bestNormalizedTime = 100000000;
 	protected CardMoveListener mainCardMoveListener;
-	
+	public static String playerTime;
+	private BestTimePanel bestTimePanel = null; 
+
 	public Main() {
 		//This is the main constructor for the game. It gets called immediately on start up,
 		// it sets the default close operation to actually close the JFrame window. 
@@ -66,11 +69,13 @@ public class Main extends JFrame implements KeyListener {
 				add(bg);
 				revalidate();
 			}
-			else {
+			else if ( playerWon ) {
 				remove(bg);
 				bg = new Background();
 				remove(Main.st);
 				add(bg);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
+				bg.add(bestTimePanel);
 				revalidate();
 			}
 		} else if (a == j) {
@@ -78,5 +83,21 @@ public class Main extends JFrame implements KeyListener {
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			System.exit(0);
 		}	
+	}
+
+	public static void setBestNormalizedTime(int newBestNormalizedTime) {
+		bestNormalizedTime = newBestNormalizedTime;
+	}
+
+	public static int getBestNormalizedTime() {
+		return bestNormalizedTime;
+	}
+
+	public static void setPlayerWon(boolean newPlayerWon) {
+		playerWon = newPlayerWon;
+	}
+
+	public static void setPlayerTime(String newPlayerTime) {
+		playerTime = newPlayerTime;
 	}
 }

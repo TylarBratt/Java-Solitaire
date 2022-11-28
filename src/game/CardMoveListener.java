@@ -11,6 +11,7 @@ public class CardMoveListener extends MouseInputAdapter {
 	private StockPile sp = Background.getStockPile();
 	private TalonPile tp = null;
 	private WinPanel wp = null;
+	private BestTimePanel bestTimePanel = null; 
 	private Card card = null;
 	private Tableau tableaucard = null;
 	private Foundation foundationPile = null;
@@ -134,6 +135,14 @@ public class CardMoveListener extends MouseInputAdapter {
 			String playerTime = gameTimer.getCurrentTime();
 			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 275, 300, 250, 125, 0);
 			pressed.getParent().add(wp);
+			if ( Main.getBestNormalizedTime() > gameTimer.getNormalizedTime() ) {
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
+				Main.bestNormalizedTime = gameTimer.getNormalizedTime();
+				Main.setPlayerWon(true);
+				Main.setPlayerTime(playerTime);
+				pressed.getParent().add(bestTimePanel);
+
+			}
 			return true;	
 		}
 		else {
