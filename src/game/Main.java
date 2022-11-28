@@ -11,7 +11,7 @@ public class Main extends JFrame implements KeyListener {
 	 * Images were collected from https://pixabay.com/photos/playing-card-back-template-568201/ and https://pixabay.com/vectors/card-deck-deck-cards-playing-cards-161536/ as these images are free for commercial use.
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	public static int easyHard = 0;
 	static protected Start st;
 	static protected Background bg = null;
 	public static final int WINDOW_WIDTH = 750;
@@ -53,6 +53,7 @@ public class Main extends JFrame implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		char a = e.getKeyChar();
 		char start = 'e';
+		char hard = 'r';
 		char j = 'j';
 		
 		
@@ -60,6 +61,7 @@ public class Main extends JFrame implements KeyListener {
 		if(a == start) {
 			//determine if you are coming from start screen or end of a game
 			if (  bg == null ) {
+				easyHard = 0;
 				remove(st);
 				bg = new Background();
 				remove(Main.st);
@@ -67,6 +69,7 @@ public class Main extends JFrame implements KeyListener {
 				revalidate();
 			}
 			else {
+				easyHard = 0;
 				remove(bg);
 				bg = new Background();
 				remove(Main.st);
@@ -75,6 +78,23 @@ public class Main extends JFrame implements KeyListener {
 			}
 		} else if (a == j) {
 			//sc = new Score();
+		} else if (a == hard) {
+			if (  bg == null ) {
+				easyHard = 1;
+				remove(st);
+				bg = new Background();
+				remove(Main.st);
+				add(bg);
+				revalidate();
+			}
+			else {
+				easyHard = 1;
+				remove(bg);
+				bg = new Background();
+				remove(Main.st);
+				add(bg);
+				revalidate();
+			}
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			System.exit(0);
 		}	
