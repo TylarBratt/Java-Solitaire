@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Point;
 import javax.swing.SwingUtilities;
+import java.util.ArrayList;
 
 public class Main extends JFrame implements KeyListener {
 	
@@ -35,7 +36,11 @@ public class Main extends JFrame implements KeyListener {
 	public static Tableau mementoTableau;
 	public static Foundation mementoFoundation;
 	public static TalonPile mementoTalon;
+
+	public static ArrayList<Background> mementoBackgroundArray = new ArrayList<Background>();
 	
+	public static int undoTracker = 0;
+
 	public Main() {
 		//This is the main constructor for the game. It gets called immediately on start up,
 		// it sets the default close operation to actually close the JFrame window. 
@@ -88,6 +93,11 @@ public class Main extends JFrame implements KeyListener {
 				bg = new Background();
 				remove(Main.st);
 				initializePiles(bg);
+				System.out.println("bg.getTableauArray in Main: " + bg.getTableauArray());
+			
+				for ( Tableau one_tableau : bg.getTableauArray() ) {
+					System.out.println("background tableau: " + one_tableau.cards);
+				}
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
@@ -96,30 +106,39 @@ public class Main extends JFrame implements KeyListener {
 					public void actionPerformed(ActionEvent e) {
 						new Thread() {
 							public void run(){
-								
-								if (mementoFoundation!=null && mementoTableau!=null) {
-									mementoFoundation.push(mementoCard);
-									mementoTableau.pop();
-
-									setMementoFoundation(null);
-									setMementoTableau(null);
-									setMementoCard(null);
-
+								System.out.println("undo button pressed");
+								int mementoBackgroundArraySize = mementoBackgroundArray.size();
+								System.out.println("memento array size: " + mementoBackgroundArraySize);
+								if ( mementoBackgroundArraySize <= 1 ) {
+									System.out.println("No moves to be made");
 								}
-								if (mementoTalon!=null && mementoTableau!=null) {
-									mementoTalon.push(mementoCard);
-									mementoTableau.pop();
+								else {
+									remove(bg);
 
-									setMementoTalon(null);
-									setMementoTableau(null);
-									setMementoCard(null);
+									bg = mementoBackgroundArray.get(undoTracker-1);
+									undoTracker -= 1;
+									// mementoBackgroundArray.remove(mementoBackgroundArray.size()-1);
+									
+									bg.add(bg.getTpPile());
+									bg.add(bg.getStockPile());
 
-									System.out.println("MementoTableau: " + mementoTableau);
-									System.out.println("MementoTalon: " + mementoTalon);
-									System.out.println("MementoCard: " + mementoCard);
+									for (int i = 0; i<bg.getTableauArray().length; i++) {
+										bg.add(bg.getTableauArray()[i]);
+									}
+
+									for (int i = 0; i<bg.getFoundationArray().length; i++) {
+										bg.add(bg.getFoundationArray()[i]);
+									}
+
+									bg.add(undoButton);
+									bg.add(bg.gameTimer);
+									bg.addMouseListener(game);
+									bg.addMouseMotionListener(game);
+
+									add(bg);
+									bg.revalidate();
+									bg.repaint();
 								}
-								bg.revalidate();
-								bg.repaint();
 							}
 						}.start();
 					}
@@ -127,12 +146,14 @@ public class Main extends JFrame implements KeyListener {
 			
 				bg.add(undoButton);
 				add(bg);
+				System.out.println("bg in Main after add: " + bg);
 				validate();
 			}
 			else {
 				easyHard = 0;
 				remove(bg);
 				bg = new Background();
+				System.out.println("bg in Main: " + bg);
 				remove(Main.st);
 				initializePiles(bg);
 				CardMoveListener game = new CardMoveListener();
@@ -141,29 +162,22 @@ public class Main extends JFrame implements KeyListener {
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						// new Thread() {
-						// 	public void run(){
-						// 		// if (mementoFoundation!=null && mementoTableau!=null) {
-						// 		// 	mementoFoundation.push(mementoCard);
-						// 		// 	mementoTableau.pop();
-						// 		// }
-								if (mementoTalon!=null && mementoTableau!=null) {
-									mementoTalon.push(mementoCard);
-									mementoTableau.pop();
-
-									setMementoTalon(null);
-									setMementoTableau(null);
-									setMementoFoundation(null);
-
-									System.out.println("MementoTableau: " + mementoTableau);
-									System.out.println("MementoTalon: " + mementoTalon);
-									System.out.println("MementoCard: " + mementoCard);
+						new Thread() {
+							public void run(){
+								int mementoBackgroundArraySize = mementoBackgroundArray.size();
+								if ( mementoBackgroundArraySize <= 1 ) {
+									System.out.println("No moves to be made");
 								}
+								else {
+									bg = mementoBackgroundArray.get(mementoBackgroundArray.size()-2);
+									mementoBackgroundArray.remove(mementoBackgroundArray.size()-1);
 
-								bg.revalidate();
-								bg.repaint();
-						// 	}
-						// }.start();
+									add(bg);
+									bg.revalidate();
+									bg.repaint();
+								}
+							}
+						}.start();
 					}
 				});
 			
@@ -221,15 +235,14 @@ public class Main extends JFrame implements KeyListener {
 		for(int i = 0; i < foundation.length; i++) {
 			foundation[i] = new Foundation(20 + tpShift * i, 20, i + 1);
 			bg.add(foundation[i]);
-			System.out.print("foundation["+i+"]: " + foundation[i]);
 		}
-		bg.foundation = foundation;
-		Tableau[] tableau = new Tableau[7];
-		for(int k = 1; k <= tableau.length; k++) {
-			tableau[k - 1] = new Tableau(TABLEAU_POSITION.x + TABLEAU_OFFSET * (k - 1), TABLEAU_POSITION.y, k + 1);
-			bg.add(tableau[k - 1]);
-			bg.tableau = tableau;
+		bg.foundationArray = foundation;
+		Tableau[] tableauArray = new Tableau[7];
+		for(int k = 1; k <= tableauArray.length; k++) {
+			tableauArray[k - 1] = new Tableau(TABLEAU_POSITION.x + TABLEAU_OFFSET * (k - 1), TABLEAU_POSITION.y, k + 1, bg);
+			bg.add(tableauArray[k - 1]);
 		}
+		bg.tableauArray = tableauArray;
 	}
 
 	public static void setMementoFoundation(Foundation newMementoFoundation) {
@@ -252,4 +265,15 @@ public class Main extends JFrame implements KeyListener {
 		System.out.println("mementoTalon set");
 	}
 
+	public static void addToBackgroundArray(Background background) {
+		mementoBackgroundArray.add(background);
+	}
+
+	public static Background getMainBG() {
+		return bg;
+	}
+
+	public static ArrayList<Background> getBackgroundArray() {
+		return mementoBackgroundArray;
+	}
 }

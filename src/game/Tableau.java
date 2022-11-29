@@ -18,14 +18,30 @@ public class Tableau extends Pile implements Cloneable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Tableau(int position_x, int position_y, int size) {
+	public Tableau(int position_x, int position_y, int size, Background bg) {
 		super(position_x, position_y);
 		super.setSize(84, 600);
 		super.setOpaque(false);
 		for(int i = 0; i < size; i++) {
-			push(Background.getStockPile().pop());
+			push(bg.getStockPile().pop());
 		}
 		
+		if(size > 0) {
+			topCard().showFace();
+		}
+	}
+
+	//clone method
+	public Tableau(Tableau other) {
+		super(other);
+		// this.position_x = other.position_x;
+		// this.position_y = other.position_y;
+		super.setSize(84, 600);
+		super.setOpaque(false);
+		super.setPositionX(other.getPositionX());
+		super.setPositionY(other.getPositionY());
+		int size = other.cards.size();
+		System.out.println("in tableau constructor");
 		if(size > 0) {
 			topCard().showFace();
 		}

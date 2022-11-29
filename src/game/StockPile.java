@@ -29,6 +29,14 @@ public class StockPile extends Pile{
 		//Collections.shuffle(cards);
 	}
 
+	public StockPile(StockPile other) {
+		super(other);
+		//super(other.getPositionX(), other.getPositionY());
+		super.setSize(84, 112);
+		super.setPositionX(other.getPositionX());
+		super.setPositionY(other.getPositionY());
+	}
+
 	public void takeTalon(TalonPile talonPile) {
 		if (Main.easyHard == 0) {
 		int talonPileSize = talonPile.cards.size();

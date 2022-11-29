@@ -17,8 +17,9 @@ public class Foundation extends Pile implements Cloneable{
 
 	public Foundation(Foundation other){
 		super(other);
-		this.position_x = other.position_x;
-		this.position_y = other.position_y;
+		super.setPositionX(other.getPositionX());
+		super.setPositionY(other.getPositionY());
+		super.setSize(84, 112);
 		this.suit = other.suit;
 	}
 	

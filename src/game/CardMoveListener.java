@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.event.MouseEvent;
 import javax.swing.event.MouseInputAdapter;
 import java.util.Stack;
+import java.util.ArrayList;
 
 public class CardMoveListener extends MouseInputAdapter {
 
@@ -23,6 +24,7 @@ public class CardMoveListener extends MouseInputAdapter {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
+		Background bg = Main.getMainBG();
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
 		System.out.println("pressed: " + pressed);
 		if(pressed instanceof Foundation) {
@@ -47,7 +49,7 @@ public class CardMoveListener extends MouseInputAdapter {
 			tp = null;
 			card = tableaucard.getTableauCardClick(e.getY() - 150);
 			Main.setMementoCard(card);
-			for(Foundation foundation : Background.getFoundation()) {
+			for(Foundation foundation : bg.getFoundationArray()) {
 				if(tableaucard.moveTo(foundation, card) && card==tableaucard.topCard()) {
 					tableaucard = null;
 					break;
@@ -60,12 +62,12 @@ public class CardMoveListener extends MouseInputAdapter {
 			
 			tableaucard = null;
 			if(!sp.noCard()) {
-				TalonPile tp = Background.getTpPile();
+				TalonPile tp = bg.getTpPile();
 				tp.push(sp.pop());
 				tp.topCard().showFace();
 			}
 			else {
-				TalonPile tp = Background.getTpPile();
+				TalonPile tp = bg.getTpPile();
 				System.out.println("Stock pile is empty");
 				sp.takeTalon(tp);
 			}
@@ -74,13 +76,13 @@ public class CardMoveListener extends MouseInputAdapter {
 		else if(pressed instanceof TalonPile) {
 			
 			tableaucard = null;
-			tp = Background.getTpPile();
+			tp = bg.getTpPile();
 			card = tp.topCard();
 			Main.setMementoCard(card);
 			Main.setMementoTalon(tp);
 			
 			if(card != null) {
-				for(Foundation foundation : Background.getFoundation()) {
+				for(Foundation foundation : bg.getFoundationArray()) {
 					foundation.moveWaste(tp, card);					
 				}
 			}
@@ -88,12 +90,12 @@ public class CardMoveListener extends MouseInputAdapter {
 		
 		e.getComponent().repaint();
 
-		checkWinState(Background.getFoundation(), pressed);
+		checkWinState(bg.getFoundationArray(), pressed);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
+		Background bg = Main.getMainBG();
 		if(card != null) {
 			
 			Component release = e.getComponent().getComponentAt(e.getPoint());
@@ -137,9 +139,26 @@ public class CardMoveListener extends MouseInputAdapter {
 		foundationPile = null;
 		tableaucard = null;
 		tp = null;
+
+		for ( Tableau one_tableau : bg.getTableauArray() ) {
+			System.out.println("background tableau in cardlistner: " + one_tableau.cards);
+		}
+		Background backgroundMemento = new Background(bg);
+		Main.addToBackgroundArray(backgroundMemento);
+
+		System.out.println("Background array");
+		ArrayList<Background> backgroundArray = Main.getBackgroundArray();
+		Main.undoTracker += 1;
+		for ( Background background : backgroundArray ) {
+			// System.out.println("background: " + background);
+			// System.out.println("background talon cards: " + background.tp.cards);
+			// System.out.println("background talon: " + background.tp);
+		}
+
 	}
 
 	public boolean checkWinState(Foundation[] foundations, Component pressed) {
+		Background bg = Main.getMainBG();
 		int completeFoundations = 0;
 		for ( int i=0; i<4; i++ ) {
 			Foundation currentFoundation = foundations[i];
@@ -151,7 +170,7 @@ public class CardMoveListener extends MouseInputAdapter {
 		}
 		if ( completeFoundations==4 ) {
 			System.out.println("You won!");
-			gameTimer = Background.getGameTimer();
+			gameTimer = bg.getGameTimer();
 			gameTimer.stopTimer();
 			String playerTime = gameTimer.getCurrentTime();
 			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 275, 300, 250, 125, 0);
