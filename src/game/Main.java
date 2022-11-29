@@ -17,8 +17,10 @@ public class Main extends JFrame implements KeyListener {
 	public static final int WINDOW_WIDTH = 750;
 	public static final int WINDOW_HEIGHT = 600;
 	static protected boolean playerWon = false;
+	static protected int bestNormalizedTime = 100000;
+	static protected String playerTime = "";
 	protected CardMoveListener mainCardMoveListener;
-	
+	protected BestTimePanel bestTimePanel;
 	public Main() {
 		//This is the main constructor for the game. It gets called immediately on start up,
 		// it sets the default close operation to actually close the JFrame window. 
@@ -60,7 +62,7 @@ public class Main extends JFrame implements KeyListener {
 		//System.out.println("The Key Pressed was: " + a);
 		if(a == start) {
 			//determine if you are coming from start screen or end of a game
-			if (  bg == null ) {
+			if (   bg == null || playerWon == false  ) {
 				easyHard = 0;
 				remove(st);
 				bg = new Background();
@@ -74,12 +76,14 @@ public class Main extends JFrame implements KeyListener {
 				bg = new Background();
 				remove(Main.st);
 				add(bg);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
+				bg.add(bestTimePanel);
 				revalidate();
 			}
 		} else if (a == j) {
 			//sc = new Score();
 		} else if (a == hard) {
-			if (  bg == null ) {
+			if (  bg == null || playerWon == false ) {
 				easyHard = 1;
 				remove(st);
 				bg = new Background();
@@ -93,10 +97,24 @@ public class Main extends JFrame implements KeyListener {
 				bg = new Background();
 				remove(Main.st);
 				add(bg);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
+				bg.add(bestTimePanel);
 				revalidate();
 			}
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			System.exit(0);
 		}	
 	}
+	public static int getBestNormalizedTime() {
+		return bestNormalizedTime;
+	}
+
+	public static void setPlayerWon(boolean newPlayerWon) {
+		playerWon = newPlayerWon;
+	}
+
+	public static void setPlayerTime(String newPlayerTime) {
+		playerTime = newPlayerTime;
+	}
+
 }
