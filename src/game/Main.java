@@ -4,6 +4,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Point;
+import javax.swing.SwingUtilities;
 
 public class Main extends JFrame implements KeyListener {
 	
@@ -21,6 +25,17 @@ public class Main extends JFrame implements KeyListener {
 	static protected String playerTime = "";
 	protected CardMoveListener mainCardMoveListener;
 	protected BestTimePanel bestTimePanel;
+	private static UndoButton undoButton;
+
+	protected static int tpShift = 100;
+	public static Point TABLEAU_POSITION = new Point(20, 150);
+	public static int TABLEAU_OFFSET = 100;
+	
+	public static Card mementoCard;
+	public static Tableau mementoTableau;
+	public static Foundation mementoFoundation;
+	public static TalonPile mementoTalon;
+	
 	public Main() {
 		//This is the main constructor for the game. It gets called immediately on start up,
 		// it sets the default close operation to actually close the JFrame window. 
@@ -36,7 +51,12 @@ public class Main extends JFrame implements KeyListener {
 	
 	public static void main(String[] args) {
 		//our actual main class that gets run on startup, currently just sets the Main window to visible.
-		new Main().setVisible(true);
+		//new Main().setVisible(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				new Main().setVisible(true);
+			}
+		});
 	}
 
 	@Override
@@ -67,18 +87,91 @@ public class Main extends JFrame implements KeyListener {
 				remove(st);
 				bg = new Background();
 				remove(Main.st);
+				initializePiles(bg);
+				CardMoveListener game = new CardMoveListener();
+				bg.addMouseListener(game);
+				bg.addMouseMotionListener(game);
+				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
+				undoButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						new Thread() {
+							public void run(){
+								
+								if (mementoFoundation!=null && mementoTableau!=null) {
+									mementoFoundation.push(mementoCard);
+									mementoTableau.pop();
+
+									setMementoFoundation(null);
+									setMementoTableau(null);
+									setMementoCard(null);
+
+								}
+								if (mementoTalon!=null && mementoTableau!=null) {
+									mementoTalon.push(mementoCard);
+									mementoTableau.pop();
+
+									setMementoTalon(null);
+									setMementoTableau(null);
+									setMementoCard(null);
+
+									System.out.println("MementoTableau: " + mementoTableau);
+									System.out.println("MementoTalon: " + mementoTalon);
+									System.out.println("MementoCard: " + mementoCard);
+								}
+								bg.revalidate();
+								bg.repaint();
+							}
+						}.start();
+					}
+				});
+			
+				bg.add(undoButton);
 				add(bg);
-				revalidate();
+				validate();
 			}
 			else {
 				easyHard = 0;
 				remove(bg);
 				bg = new Background();
 				remove(Main.st);
-				add(bg);
+				initializePiles(bg);
+				CardMoveListener game = new CardMoveListener();
+				bg.addMouseListener(game);
+				bg.addMouseMotionListener(game);
+				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
+				undoButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// new Thread() {
+						// 	public void run(){
+						// 		// if (mementoFoundation!=null && mementoTableau!=null) {
+						// 		// 	mementoFoundation.push(mementoCard);
+						// 		// 	mementoTableau.pop();
+						// 		// }
+								if (mementoTalon!=null && mementoTableau!=null) {
+									mementoTalon.push(mementoCard);
+									mementoTableau.pop();
+
+									setMementoTalon(null);
+									setMementoTableau(null);
+									setMementoFoundation(null);
+
+									System.out.println("MementoTableau: " + mementoTableau);
+									System.out.println("MementoTalon: " + mementoTalon);
+									System.out.println("MementoCard: " + mementoCard);
+								}
+
+								bg.revalidate();
+								bg.repaint();
+						// 	}
+						// }.start();
+					}
+				});
+			
 				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
 				bg.add(bestTimePanel);
-				revalidate();
+				bg.add(undoButton);
+				add(bg);
+				validate();
 			}
 		} else if (a == j) {
 			//sc = new Score();
@@ -115,6 +208,48 @@ public class Main extends JFrame implements KeyListener {
 
 	public static void setPlayerTime(String newPlayerTime) {
 		playerTime = newPlayerTime;
+	}
+
+	private void initializePiles(Background bg) {
+		StockPile sp = new StockPile(650, 15);
+		bg.add(sp);
+		bg.sp = sp;
+		TalonPile tp = new TalonPile(650 - tpShift, 15);
+		bg.add(tp);
+		bg.tp = tp;
+		Foundation[] foundation = new Foundation[4];
+		for(int i = 0; i < foundation.length; i++) {
+			foundation[i] = new Foundation(20 + tpShift * i, 20, i + 1);
+			bg.add(foundation[i]);
+			System.out.print("foundation["+i+"]: " + foundation[i]);
+		}
+		bg.foundation = foundation;
+		Tableau[] tableau = new Tableau[7];
+		for(int k = 1; k <= tableau.length; k++) {
+			tableau[k - 1] = new Tableau(TABLEAU_POSITION.x + TABLEAU_OFFSET * (k - 1), TABLEAU_POSITION.y, k + 1);
+			bg.add(tableau[k - 1]);
+			bg.tableau = tableau;
+		}
+	}
+
+	public static void setMementoFoundation(Foundation newMementoFoundation) {
+		mementoFoundation = newMementoFoundation;
+		System.out.println("mementoFoundation set");
+	}
+
+	public static void setMementoCard(Card newMementoCard) {
+		mementoCard = newMementoCard;
+		System.out.println("mementoCard set");
+	}
+
+	public static void setMementoTableau(Tableau newMementoTableau) {
+		mementoTableau = newMementoTableau;
+		System.out.println("mementoTableau set");
+	}
+
+	public static void setMementoTalon(TalonPile newMementoTalon) {
+		mementoTalon = newMementoTalon;
+		System.out.println("mementoTalon set");
 	}
 
 }

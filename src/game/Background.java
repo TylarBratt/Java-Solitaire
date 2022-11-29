@@ -21,23 +21,19 @@ public class Background extends JLayeredPane{
 	
 	public static Point TABLEAU_POSITION = new Point(20, 150);
 	public static int TABLEAU_OFFSET = 100;
-	private static StockPile sp;
-	private static TalonPile tp;
+	public static StockPile sp;
+	public static TalonPile tp;
 	private static GameTimer gameTimer;
-	private static WinPanel wp;
-	private static Foundation[] foundation;
-	private static Tableau[] tableau;
+	public static Foundation[] foundation;
+	public static Tableau[] tableau;
 	public CardMoveListener game;
 	public static boolean playerWon = false;
 	
 
 	public Background() {
 		super.setLayout(null);
-		initializePiles();
+		//initializePiles();
 		initializeGameTimer();
-		game = new CardMoveListener();
-		addMouseListener(game);
-		addMouseMotionListener(game);
 	}
 
 	private void initializeGameTimer() {

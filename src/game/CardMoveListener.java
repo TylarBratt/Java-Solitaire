@@ -2,13 +2,13 @@ package game;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
-
 import javax.swing.event.MouseInputAdapter;
+import java.util.Stack;
 
 public class CardMoveListener extends MouseInputAdapter {
 
 	
-	private StockPile sp = Background.getStockPile();
+	private StockPile sp = Main.bg.getStockPile();
 	private TalonPile tp = null;
 	private WinPanel wp = null;
 	private BestTimePanel bestTimePanel = null; 
@@ -17,25 +17,36 @@ public class CardMoveListener extends MouseInputAdapter {
 	private Foundation foundationPile = null;
 	public boolean listenerPlayerWon = false; 
 	private GameTimer gameTimer;
+	//private Foundation mementoFoundation;
+	private Tableau tableauMemento;
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
-
+		System.out.println("pressed: " + pressed);
 		if(pressed instanceof Foundation) {
 			
 			foundationPile = (Foundation) pressed;
+			Main.setMementoFoundation(foundationPile);
 			tableaucard = null;
 			tp = null;
 			card = foundationPile.topCard();
-					
+			Main.setMementoCard(card);
+			
+			for (Card card : Main.mementoFoundation.getCards()) {
+				System.out.println("memento card: " + card);
+			}
+			for (Card card : foundationPile.getCards()) {
+				System.out.println("foundation card: " + card);
+			}
 		}
 		
 		else if(pressed instanceof Tableau) {
 			tableaucard = (Tableau) pressed;
 			tp = null;
 			card = tableaucard.getTableauCardClick(e.getY() - 150);
+			Main.setMementoCard(card);
 			for(Foundation foundation : Background.getFoundation()) {
 				if(tableaucard.moveTo(foundation, card) && card==tableaucard.topCard()) {
 					tableaucard = null;
@@ -65,13 +76,15 @@ public class CardMoveListener extends MouseInputAdapter {
 			tableaucard = null;
 			tp = Background.getTpPile();
 			card = tp.topCard();
+			Main.setMementoCard(card);
+			Main.setMementoTalon(tp);
+			
 			if(card != null) {
 				for(Foundation foundation : Background.getFoundation()) {
 					foundation.moveWaste(tp, card);					
 				}
 			}
 		}
-		
 		
 		e.getComponent().repaint();
 
@@ -89,6 +102,8 @@ public class CardMoveListener extends MouseInputAdapter {
 				System.out.println("Move Card to tableau!");
 				if(tp != null) {
 					Tableau tableauCard = (Tableau) release;
+					Main.setMementoTableau(tableauCard);
+					System.out.println("in mouseReleased Tableau instance");
 					if(!tp.noCard()) {
 						tableauCard.moveWaste(tp, card);
 					}
@@ -97,12 +112,18 @@ public class CardMoveListener extends MouseInputAdapter {
 				else if(tableaucard != null) {
 					Tableau src = tableaucard;
 					Tableau dest = (Tableau) release;
+
+					Main.setMementoTableau(dest);
+					System.out.println("in mouseReleased Tableau instance");
 					src.moveTo(dest, card);
 					src.repaint();
 				}
 				else if(foundationPile != null) {	
 					Foundation src = foundationPile;
 					Tableau dest = (Tableau)release;
+
+					Main.setMementoTableau(dest);
+					System.out.println("in mouseReleased Tableau instance");
 					src.moveTo(dest, card);
 					src.repaint();
 					dest.repaint();
@@ -141,7 +162,6 @@ public class CardMoveListener extends MouseInputAdapter {
 				Main.setPlayerWon(true);
 				Main.setPlayerTime(playerTime);
 				pressed.getParent().add(bestTimePanel);
-
 			}
 			return true;	
 		}
@@ -149,6 +169,19 @@ public class CardMoveListener extends MouseInputAdapter {
 			System.out.println("You haven't won yet");
 			return false;
 		} 
+	}
+	
+	public Stack<Card> getFoundationPile(){
+		return foundationPile.getCards();
+	}
+
+	
+	public void setFoundationPile(Foundation foundation){
+		this.foundationPile = foundation;
+	}
+
+	public Foundation getFoundation(){
+		return foundationPile;
 	}
 
 }

@@ -1,7 +1,7 @@
 package game;
 
 import java.awt.Graphics;
-public class Foundation extends Pile{
+public class Foundation extends Pile implements Cloneable{
 
 	/**
 	 * 
@@ -13,7 +13,13 @@ public class Foundation extends Pile{
 		super(position_x, position_y);
 		super.setSize(84, 112);
 		this.suit = i;
-		
+	}
+
+	public Foundation(Foundation other){
+		super(other);
+		this.position_x = other.position_x;
+		this.position_y = other.position_y;
+		this.suit = other.suit;
 	}
 	
 	@Override
@@ -69,6 +75,7 @@ public class Foundation extends Pile{
 		return false;
 	}
 
-	
-
+	public int getSuit() {
+		return suit;
+	}
 }

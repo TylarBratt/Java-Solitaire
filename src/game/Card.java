@@ -4,7 +4,7 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
-public class Card {
+public class Card implements Cloneable {
 	//this defines a class for cards with a method to draw both the front and back
 	//these variables are file names to locate the images.
 	public static String cardBackName = "back";
@@ -19,6 +19,11 @@ public class Card {
 	private boolean face;
 	
 	private Colour color;
+
+	public Card(int value, String suit) {
+		this.value = value;
+		this.suit = suit;
+	}
 	
 	public Card(int value, Suit suit) {
 		this.value = value;
@@ -50,7 +55,7 @@ public class Card {
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
-	
+
 	private String fileCards(Suit suit, int value) {
 		
 		char ch;
@@ -129,4 +134,15 @@ public class Card {
 	public void showFace() {
 		face = true;
 	}
+
+	@Override
+	public Object clone() {
+    Card card = null;
+    try {
+        card = (Card) super.clone();
+    } catch (CloneNotSupportedException e) {
+        card = new Card(this.getValue(), this.getSuit());
+    }
+    return card;
+}
 }

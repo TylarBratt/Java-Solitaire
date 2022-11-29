@@ -11,7 +11,7 @@ import game.Tableau;
 import java.awt.Color;
 //import java.awt.GradientPaint;
 
-public class Tableau extends Pile{
+public class Tableau extends Pile implements Cloneable{
 
 	/**
 	 * This file displays the tableau field. the lines comentented out are a color gradient, it look cool but is not important.
@@ -130,4 +130,8 @@ public class Tableau extends Pile{
 		     }
      }
 	 
+	 public Object clone() throws CloneNotSupportedException
+	 {
+		 return super.clone();
+	 }
 }
