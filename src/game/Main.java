@@ -88,7 +88,12 @@ public class Main extends JFrame implements KeyListener {
 		if(a == start) {
 			//determine if you are coming from start screen or end of a game
 			if (   bg == null || playerWon == false  ) {
+				//clear undo array
+				mementoBackgroundArray.clear();
 				easyHard = 0;
+				if (undoButton!=null) {
+					bg.remove(undoButton);
+				}
 				remove(st);
 				bg = new Background();
 				remove(Main.st);
@@ -140,6 +145,7 @@ public class Main extends JFrame implements KeyListener {
 									bg.repaint();
 								}
 							}
+				
 						}.start();
 					}
 				});
@@ -150,8 +156,17 @@ public class Main extends JFrame implements KeyListener {
 				validate();
 			}
 			else {
+				//clear undo array
+				mementoBackgroundArray.clear();
 				easyHard = 0;
+				
+				bg.removeAll();
+				// bg.remove(undoButton);
+				// remove(bg.sp);
+				// remove(bg.tp);
 				remove(bg);
+				//validate();
+				
 				bg = new Background();
 				System.out.println("bg in Main: " + bg);
 				remove(Main.st);
@@ -162,8 +177,8 @@ public class Main extends JFrame implements KeyListener {
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						new Thread() {
-							public void run(){
+						// new Thread() {
+						// 	public void run(){
 								int mementoBackgroundArraySize = mementoBackgroundArray.size();
 								if ( mementoBackgroundArraySize <= 1 ) {
 									System.out.println("No moves to be made");
@@ -176,8 +191,8 @@ public class Main extends JFrame implements KeyListener {
 									bg.revalidate();
 									bg.repaint();
 								}
-							}
-						}.start();
+						// 	}
+						// }.start();
 					}
 				});
 			
@@ -277,3 +292,4 @@ public class Main extends JFrame implements KeyListener {
 		return mementoBackgroundArray;
 	}
 }
+
