@@ -62,9 +62,16 @@ public class Main extends JFrame implements KeyListener {
 		//System.out.println("The Key Pressed was: " + a);
 		if(a == start) {
 			//determine if you are coming from start screen or end of a game
-			if (   bg == null || playerWon == false  ) {
+			if (  playerWon == false  ) {
 				easyHard = 0;
-				remove(st);
+				
+				if ( st != null ) {
+					remove(st);
+				}
+				
+				if ( bg != null ) {
+					remove(bg);
+				}
 				bg = new Background();
 				remove(Main.st);
 				add(bg);
