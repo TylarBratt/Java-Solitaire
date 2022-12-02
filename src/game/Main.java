@@ -87,16 +87,17 @@ public class Main extends JFrame implements KeyListener {
 		//System.out.println("The Key Pressed was: " + a);
 		if(a == start) {
 			//determine if you are coming from start screen or end of a game
-			if (   bg == null || playerWon == false  ) {
+			if (   playerWon == false  ) {
 				//clear undo array
 				mementoBackgroundArray.clear();
 				easyHard = 0;
-				if (undoButton!=null) {
-					bg.remove(undoButton);
+				if ( bg != null) {
+					remove(bg);
 				}
-				remove(st);
+				if ( st != null) {
+					remove(st);
+				}
 				bg = new Background();
-				remove(Main.st);
 				initializePiles(bg);
 				System.out.println("bg.getTableauArray in Main: " + bg.getTableauArray());
 			
