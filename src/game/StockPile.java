@@ -31,7 +31,6 @@ public class StockPile extends Pile{
 
 	public StockPile(StockPile other) {
 		super(other);
-		//super(other.getPositionX(), other.getPositionY());
 		super.setSize(84, 112);
 		super.setPositionX(other.getPositionX());
 		super.setPositionY(other.getPositionY());

@@ -10,7 +10,7 @@ import javax.swing.JButton;
 
 import javax.swing.*;  
 
-public class Background extends JLayeredPane{
+public class Background extends JPanel{
 
 	/**
 	 * This class draws a green background on the window. 
@@ -38,13 +38,17 @@ public class Background extends JLayeredPane{
 
 	public Background(Background other) {
 		super.setLayout(null);
-		this.sp = new StockPile(other.getStockPile());
-		this.tp = new TalonPile(other.getTpPile());
 		
+		StockPile clonedSP = new StockPile(other.getStockPile());
+		this.setStockPile(clonedSP);
+		
+		TalonPile clonedTP = new TalonPile(other.getTpPile());
+		this.setTalonPile(clonedTP);
+
 		this.foundationArray = new  Foundation[4];
 		for (int i = 0; i<other.getFoundationArray().length; i++) {
 			Foundation currentFoundation = new Foundation(other.getFoundationArray()[i]);
-			System.out.println(currentFoundation);
+			// System.out.println(currentFoundation);
 			this.foundationArray[i] = currentFoundation;
 		}
 		
@@ -75,10 +79,19 @@ public class Background extends JLayeredPane{
 	public TalonPile getTpPile() {
 		return this.tp;
 	}
+
+	public void setTalonPile(TalonPile talonpile) {
+		this.tp = talonpile;
+	}
+	
 	
 
 	public StockPile getStockPile() {
 		return this.sp;
+	}
+
+	public void setStockPile(StockPile stockpile) {
+		this.sp = stockpile;
 	}
 	
 	public GameTimer getGameTimer() {

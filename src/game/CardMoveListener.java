@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class CardMoveListener extends MouseInputAdapter {
 
 	
-	private StockPile sp = Main.bg.getStockPile();
+	private StockPile sp = null;
 	private TalonPile tp = null;
 	private WinPanel wp = null;
 	private BestTimePanel bestTimePanel = null; 
@@ -18,37 +18,26 @@ public class CardMoveListener extends MouseInputAdapter {
 	private Foundation foundationPile = null;
 	public boolean listenerPlayerWon = false; 
 	private GameTimer gameTimer;
-	//private Foundation mementoFoundation;
-	private Tableau tableauMemento;
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
 		Background bg = Main.getMainBG();
+		
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
-		System.out.println("pressed: " + pressed);
+
 		if(pressed instanceof Foundation) {
 			
 			foundationPile = (Foundation) pressed;
-			Main.setMementoFoundation(foundationPile);
 			tableaucard = null;
 			tp = null;
 			card = foundationPile.topCard();
-			Main.setMementoCard(card);
-			
-			for (Card card : Main.mementoFoundation.getCards()) {
-				System.out.println("memento card: " + card);
-			}
-			for (Card card : foundationPile.getCards()) {
-				System.out.println("foundation card: " + card);
-			}
 		}
 		
 		else if(pressed instanceof Tableau) {
 			tableaucard = (Tableau) pressed;
 			tp = null;
 			card = tableaucard.getTableauCardClick(e.getY() - 150);
-			Main.setMementoCard(card);
 			for(Foundation foundation : bg.getFoundationArray()) {
 				if(tableaucard.moveTo(foundation, card) && card==tableaucard.topCard()) {
 					tableaucard = null;
@@ -59,11 +48,12 @@ public class CardMoveListener extends MouseInputAdapter {
 		}
 		
 		else if(pressed instanceof StockPile) {
-			
+			sp = bg.getStockPile();
 			tableaucard = null;
 			if(!sp.noCard()) {
 				TalonPile tp = bg.getTpPile();
 				tp.push(sp.pop());
+				bg.setTalonPile(tp);
 				tp.topCard().showFace();
 			}
 			else {
@@ -78,9 +68,6 @@ public class CardMoveListener extends MouseInputAdapter {
 			tableaucard = null;
 			tp = bg.getTpPile();
 			card = tp.topCard();
-			Main.setMementoCard(card);
-			Main.setMementoTalon(tp);
-			
 			if(card != null) {
 				for(Foundation foundation : bg.getFoundationArray()) {
 					foundation.moveWaste(tp, card);					
@@ -89,7 +76,6 @@ public class CardMoveListener extends MouseInputAdapter {
 		}
 		
 		e.getComponent().repaint();
-
 		checkWinState(bg.getFoundationArray(), pressed);
 	}
 
@@ -105,18 +91,17 @@ public class CardMoveListener extends MouseInputAdapter {
 				if(tp != null) {
 					Tableau tableauCard = (Tableau) release;
 					Main.setMementoTableau(tableauCard);
-					System.out.println("in mouseReleased Tableau instance");
 					if(!tp.noCard()) {
 						tableauCard.moveWaste(tp, card);
 					}
 					tp.repaint();
+					
 				}
 				else if(tableaucard != null) {
 					Tableau src = tableaucard;
 					Tableau dest = (Tableau) release;
 
 					Main.setMementoTableau(dest);
-					System.out.println("in mouseReleased Tableau instance");
 					src.moveTo(dest, card);
 					src.repaint();
 				}
@@ -125,7 +110,6 @@ public class CardMoveListener extends MouseInputAdapter {
 					Tableau dest = (Tableau)release;
 
 					Main.setMementoTableau(dest);
-					System.out.println("in mouseReleased Tableau instance");
 					src.moveTo(dest, card);
 					src.repaint();
 					dest.repaint();
@@ -133,28 +117,16 @@ public class CardMoveListener extends MouseInputAdapter {
 			}
 		}
 		
-		
+		bg = Main.getMainBG();
+
+		Background backgroundMemento = new Background(bg);
+		Main.addToBackgroundArray(backgroundMemento);
+
 		e.getComponent().repaint();
 		card = null;
 		foundationPile = null;
 		tableaucard = null;
 		tp = null;
-
-		for ( Tableau one_tableau : bg.getTableauArray() ) {
-			System.out.println("background tableau in cardlistner: " + one_tableau.cards);
-		}
-		Background backgroundMemento = new Background(bg);
-		Main.addToBackgroundArray(backgroundMemento);
-
-		System.out.println("Background array");
-		ArrayList<Background> backgroundArray = Main.getBackgroundArray();
-		Main.undoTracker += 1;
-		for ( Background background : backgroundArray ) {
-			// System.out.println("background: " + background);
-			// System.out.println("background talon cards: " + background.tp.cards);
-			// System.out.println("background talon: " + background.tp);
-		}
-
 	}
 
 	public boolean checkWinState(Foundation[] foundations, Component pressed) {
@@ -166,7 +138,6 @@ public class CardMoveListener extends MouseInputAdapter {
 			if ( foundationSize == 13 ) {
 				completeFoundations++;
 			}
-			System.out.println(currentFoundation.cards.size());
 		}
 		if ( completeFoundations==4 ) {
 			System.out.println("You won!");

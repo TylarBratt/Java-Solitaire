@@ -37,9 +37,7 @@ public class Main extends JFrame implements KeyListener {
 	public static Foundation mementoFoundation;
 	public static TalonPile mementoTalon;
 
-	public static ArrayList<Background> mementoBackgroundArray = new ArrayList<Background>();
-	
-	public static int undoTracker = 0;
+	public static ArrayList<Background> mementoBackgroundArray;
 
 	public Main() {
 		//This is the main constructor for the game. It gets called immediately on start up,
@@ -89,7 +87,8 @@ public class Main extends JFrame implements KeyListener {
 			//determine if you are coming from start screen or end of a game
 			if (   playerWon == false  ) {
 				//clear undo array
-				mementoBackgroundArray.clear();
+				mementoBackgroundArray = new ArrayList<Background>();
+				
 				easyHard = 0;
 				if ( bg != null) {
 					remove(bg);
@@ -99,32 +98,38 @@ public class Main extends JFrame implements KeyListener {
 				}
 				bg = new Background();
 				initializePiles(bg);
-				System.out.println("bg.getTableauArray in Main: " + bg.getTableauArray());
-			
-				for ( Tableau one_tableau : bg.getTableauArray() ) {
-					System.out.println("background tableau: " + one_tableau.cards);
-				}
+				
+				//add initial state to mementoBackgroundArray
+				Background initialBackground = new Background(bg);
+				addToBackgroundArray(initialBackground);
+				
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
+				
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						new Thread() {
 							public void run(){
 								System.out.println("undo button pressed");
+
 								int mementoBackgroundArraySize = mementoBackgroundArray.size();
 								System.out.println("memento array size: " + mementoBackgroundArraySize);
-								if ( mementoBackgroundArraySize <= 1 ) {
+								if ( mementoBackgroundArraySize < 2 ) {
 									System.out.println("No moves to be made");
 								}
 								else {
 									remove(bg);
 
-									bg = mementoBackgroundArray.get(undoTracker-1);
-									undoTracker -= 1;
-									// mementoBackgroundArray.remove(mementoBackgroundArray.size()-1);
+									int index = mementoBackgroundArraySize - 2;
 									
+									//clone item out of ArrayList
+									bg = new Background(mementoBackgroundArray.get(index));
+
+									if ( mementoBackgroundArraySize > 1 ) {
+										mementoBackgroundArray.remove(mementoBackgroundArraySize-1);
+									}
 									bg.add(bg.getTpPile());
 									bg.add(bg.getStockPile());
 
@@ -142,6 +147,7 @@ public class Main extends JFrame implements KeyListener {
 									bg.addMouseMotionListener(game);
 
 									add(bg);
+
 									bg.revalidate();
 									bg.repaint();
 								}
@@ -158,16 +164,11 @@ public class Main extends JFrame implements KeyListener {
 			}
 			else {
 				//clear undo array
-				mementoBackgroundArray.clear();
+				mementoBackgroundArray = new ArrayList<Background>();
 				easyHard = 0;
 				
 				bg.removeAll();
-				// bg.remove(undoButton);
-				// remove(bg.sp);
-				// remove(bg.tp);
 				remove(bg);
-				//validate();
-				
 				bg = new Background();
 				System.out.println("bg in Main: " + bg);
 				remove(Main.st);
