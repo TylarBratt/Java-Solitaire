@@ -34,12 +34,14 @@ public class Foundation extends Pile implements Cloneable{
 		}
 	}
 
-	public void moveWaste(TalonPile tp, Card card) {
+	public boolean moveWaste(TalonPile tp, Card card) {
 	
 		if(accepts(card)) {
 			this.push(tp.pop());
 			tp = null;
+			return true;
 		}
+		return false;
 	}
 	
 	public void moveTo(Tableau dest, Card card) {

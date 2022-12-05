@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Point;
 import javax.swing.SwingUtilities;
 import java.util.ArrayList;
+import javax.swing.SwingConstants;
 
 public class Main extends JFrame implements KeyListener {
 	
@@ -21,11 +22,16 @@ public class Main extends JFrame implements KeyListener {
 	static protected Background bg = null;
 	public static final int WINDOW_WIDTH = 750;
 	public static final int WINDOW_HEIGHT = 600;
+	
 	static protected boolean playerWon = false;
 	static protected int bestNormalizedTime = 100000;
 	static protected String playerTime = "";
+	static protected int score;
+	static protected int bestScore;
+
 	protected CardMoveListener mainCardMoveListener;
 	protected BestTimePanel bestTimePanel;
+	protected static ScorePanel scorePanel;
 	private static UndoButton undoButton;
 
 	protected static int tpShift = 100;
@@ -38,6 +44,7 @@ public class Main extends JFrame implements KeyListener {
 	public static TalonPile mementoTalon;
 
 	public static ArrayList<Background> mementoBackgroundArray;
+	public static ArrayList<Integer> mementoScoreArray;
 
 	public Main() {
 		//This is the main constructor for the game. It gets called immediately on start up,
@@ -86,9 +93,10 @@ public class Main extends JFrame implements KeyListener {
 		if(a == start) {
 			//determine if you are coming from start screen or end of a game
 			if (   playerWon == false  ) {
-				//clear undo array
+				//clear undo arrays
 				mementoBackgroundArray = new ArrayList<Background>();
-				
+				mementoScoreArray = new ArrayList<Integer>();
+				score = 0;
 				easyHard = 0;
 				if ( bg != null) {
 					remove(bg);
@@ -103,11 +111,17 @@ public class Main extends JFrame implements KeyListener {
 				Background initialBackground = new Background(bg);
 				addToBackgroundArray(initialBackground);
 				
+				//add initial score to mementoBackgroundArray
+				Integer initialScore = new Integer(score);
+				addToScoreArray(initialScore);
+				
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
-				
+				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
+				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				bg.add(scorePanel);
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						new Thread() {
@@ -116,6 +130,7 @@ public class Main extends JFrame implements KeyListener {
 
 								int mementoBackgroundArraySize = mementoBackgroundArray.size();
 								System.out.println("memento array size: " + mementoBackgroundArraySize);
+								System.out.println("score array size: " + mementoBackgroundArraySize);
 								if ( mementoBackgroundArraySize < 2 ) {
 									System.out.println("No moves to be made");
 								}
@@ -126,9 +141,20 @@ public class Main extends JFrame implements KeyListener {
 									
 									//clone item out of ArrayList
 									bg = new Background(mementoBackgroundArray.get(index));
-
+									
+									//go through score array and decrease all scores by 2 to reflect cost of Undo action
+									for ( int i = 0; i < mementoBackgroundArraySize-1; i++ ) {
+										Integer currentScore = mementoScoreArray.get(i);
+										int newScore = Integer.valueOf(currentScore) - 2;
+										Integer newScoreInteger = new Integer(newScore);
+										mementoScoreArray.set(i, newScoreInteger);
+										System.out.println("decreased score: " + newScoreInteger);
+									}
+									
+									score = new Integer(mementoScoreArray.get(index));
 									if ( mementoBackgroundArraySize > 1 ) {
 										mementoBackgroundArray.remove(mementoBackgroundArraySize-1);
+										mementoScoreArray.remove(mementoBackgroundArraySize-1);
 									}
 									bg.add(bg.getTpPile());
 									bg.add(bg.getStockPile());
@@ -141,7 +167,10 @@ public class Main extends JFrame implements KeyListener {
 										bg.add(bg.getFoundationArray()[i]);
 									}
 
+									scorePanel.setScoreText(score);
+
 									bg.add(undoButton);
+									bg.add(scorePanel);
 									bg.add(bg.gameTimer);
 									bg.addMouseListener(game);
 									bg.addMouseMotionListener(game);
@@ -309,36 +338,36 @@ public class Main extends JFrame implements KeyListener {
 		bg.tableauArray = tableauArray;
 	}
 
-	public static void setMementoFoundation(Foundation newMementoFoundation) {
-		mementoFoundation = newMementoFoundation;
-		System.out.println("mementoFoundation set");
-	}
-
-	public static void setMementoCard(Card newMementoCard) {
-		mementoCard = newMementoCard;
-		System.out.println("mementoCard set");
-	}
-
-	public static void setMementoTableau(Tableau newMementoTableau) {
-		mementoTableau = newMementoTableau;
-		System.out.println("mementoTableau set");
-	}
-
-	public static void setMementoTalon(TalonPile newMementoTalon) {
-		mementoTalon = newMementoTalon;
-		System.out.println("mementoTalon set");
-	}
-
 	public static void addToBackgroundArray(Background background) {
 		mementoBackgroundArray.add(background);
+	}
+
+	public static ArrayList<Background> getBackgroundArray() {
+		return mementoBackgroundArray;
+	}
+
+	public static void addToScoreArray(Integer score) {
+		mementoScoreArray.add(score);
+	}
+
+	public static ArrayList<Integer> getScoreArray() {
+		return mementoScoreArray;
 	}
 
 	public static Background getMainBG() {
 		return bg;
 	}
 
-	public static ArrayList<Background> getBackgroundArray() {
-		return mementoBackgroundArray;
+	public static void increaseScore(int increase) {
+		score += increase;
+	}
+
+	public static void decreaseScore(int decrease) {
+		score -= decrease;
+	}
+
+	public static ScorePanel getScorePanel() {
+		return scorePanel;
 	}
 }
 

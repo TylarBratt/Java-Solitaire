@@ -23,8 +23,7 @@ public class CardMoveListener extends MouseInputAdapter {
 	public void mousePressed(MouseEvent e) {
 		
 		Background bg = Main.getMainBG();
-		Background backgroundMemento = new Background(bg);
-		
+		ScorePanel scorePanel = Main.getScorePanel();
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
 
 		if(pressed instanceof Foundation) {
@@ -41,7 +40,9 @@ public class CardMoveListener extends MouseInputAdapter {
 			if ( tableaucard.cards.toArray().length > 0 ) {
 				card = tableaucard.getTableauCardClick(e.getY() - 150);
 				for(Foundation foundation : bg.getFoundationArray()) {
-					if(tableaucard.moveTo(foundation, card) && card==tableaucard.topCard()) {
+					if( tableaucard.moveTo(foundation, card) ) {
+						Main.increaseScore(10);
+						scorePanel.setScoreText(Main.score);	
 						tableaucard = null;
 						break;
 					}	
@@ -70,9 +71,14 @@ public class CardMoveListener extends MouseInputAdapter {
 			tableaucard = null;
 			tp = bg.getTpPile();
 			card = tp.topCard();
+
 			if(card != null) {
 				for(Foundation foundation : bg.getFoundationArray()) {
-					foundation.moveWaste(tp, card);					
+					if ( foundation.moveWaste(tp, card) == true ) {
+						//increase score by 10 points to reflect movement to foundation
+						Main.increaseScore(10);
+						scorePanel.setScoreText(Main.score);				
+					}
 				}
 			}
 		}
@@ -85,7 +91,7 @@ public class CardMoveListener extends MouseInputAdapter {
 	public void mouseReleased(MouseEvent e) {
 		Background bg = Main.getMainBG();
 		Background backgroundMemento = new Background(bg);
-
+		ScorePanel scorePanel = Main.getScorePanel();
 		if(card != null) {
 			
 			Component release = e.getComponent().getComponentAt(e.getPoint());
@@ -93,13 +99,12 @@ public class CardMoveListener extends MouseInputAdapter {
 			if(release instanceof Tableau) {
 				System.out.println("Move Card to tableau!");
 				if(tp != null) {
+					System.out.println("From talon pile");
 					Tableau tableauCard = (Tableau) release;
 					if(!tp.noCard()) {
-						boolean canMove = tableauCard.moveWaste(tp, card);
-						// if ( canMove == true ) {
-						// 	System.out.println("tableauCard.moveWaste: " + canMove);
-						// 	Main.addToBackgroundArray(backgroundMemento);
-						// }
+						tableauCard.moveWaste(tp, card);
+						Main.increaseScore(5);
+						scorePanel.setScoreText(Main.score);	
 					}
 					tp.repaint();
 					
@@ -108,32 +113,27 @@ public class CardMoveListener extends MouseInputAdapter {
 					Tableau src = tableaucard;
 					Tableau dest = (Tableau) release;
 					
-					boolean canMove = src.moveTo(dest, card);
-					// if ( canMove == true ) {
-					// 	System.out.println("tableauCard.moveTo: " + canMove);
-					// 	Main.addToBackgroundArray(backgroundMemento);
-					// }
+					src.moveTo(dest, card);
+					System.out.println("dest: " + dest);
 					src.moveTo(dest, card);
 					src.repaint();
 				}
 				else if(foundationPile != null) {	
 					Foundation src = foundationPile;
 					Tableau dest = (Tableau)release;
-					// Main.addToBackgroundArray(backgroundMemento);
 					src.moveTo(dest, card);
 					src.repaint();
 					dest.repaint();
 				}
-			}
-			// bg = Main.getMainBG();
-			
-			// Background bg = Main.getMainBG();
-			// Background backgroundMemento = new Background(bg);
-			
+			}		
 		}
+		
 		if ( Main.easyHard == 0 ) {
 			Main.addToBackgroundArray(backgroundMemento);
 		}
+		
+		Integer scoreMemento = new Integer(Main.score);
+		Main.addToScoreArray(scoreMemento);
 		e.getComponent().repaint();
 		card = null;
 		foundationPile = null;
@@ -159,7 +159,7 @@ public class CardMoveListener extends MouseInputAdapter {
 			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 250, 300, 250, 125, 0);
 			pressed.getParent().add(wp);
 			if ( Main.getBestNormalizedTime() > gameTimer.getNormalizedTime() ) {
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 515 , 125, 50, 0);
 				Main.bestNormalizedTime = gameTimer.getNormalizedTime();
 				Main.setPlayerWon(true);
 				Main.setPlayerTime(playerTime);
@@ -168,7 +168,6 @@ public class CardMoveListener extends MouseInputAdapter {
 			return true;	
 		}
 		else {
-			System.out.println("You haven't won yet");
 			return false;
 		} 
 	}

@@ -1,12 +1,7 @@
 package game;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.*;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import javax.swing.*;
 
 public class WinPanel extends JButton{
@@ -21,5 +16,4 @@ public class WinPanel extends JButton{
 		setBackground(Color.pink);
 		System.out.println("added Win Button");
 	}
-
 }

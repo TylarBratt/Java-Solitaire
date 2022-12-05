@@ -104,7 +104,7 @@ public class Tableau extends Pile implements Cloneable{
 	}
 	
 	public boolean moveTo(Foundation dest, Card card) {
-		
+		//System.out.println("moveTo function with Foundation dest in Tableau class called");
 		if(dest.accepts(card)) {
 			//check to make sure card clicked is available to move to foundation
 			if ( card == this.topCard()) {
