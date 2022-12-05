@@ -23,6 +23,7 @@ public class CardMoveListener extends MouseInputAdapter {
 	public void mousePressed(MouseEvent e) {
 		
 		Background bg = Main.getMainBG();
+		Background backgroundMemento = new Background(bg);
 		
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
 
@@ -37,12 +38,13 @@ public class CardMoveListener extends MouseInputAdapter {
 		else if(pressed instanceof Tableau) {
 			tableaucard = (Tableau) pressed;
 			tp = null;
-			card = tableaucard.getTableauCardClick(e.getY() - 150);
-			for(Foundation foundation : bg.getFoundationArray()) {
-				if(tableaucard.moveTo(foundation, card) && card==tableaucard.topCard()) {
-					tableaucard = null;
-					break;
-					
+			if ( tableaucard.cards.toArray().length > 0 ) {
+				card = tableaucard.getTableauCardClick(e.getY() - 150);
+				for(Foundation foundation : bg.getFoundationArray()) {
+					if(tableaucard.moveTo(foundation, card) && card==tableaucard.topCard()) {
+						tableaucard = null;
+						break;
+					}	
 				}
 			}
 		}
@@ -82,6 +84,8 @@ public class CardMoveListener extends MouseInputAdapter {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		Background bg = Main.getMainBG();
+		Background backgroundMemento = new Background(bg);
+
 		if(card != null) {
 			
 			Component release = e.getComponent().getComponentAt(e.getPoint());
@@ -90,9 +94,12 @@ public class CardMoveListener extends MouseInputAdapter {
 				System.out.println("Move Card to tableau!");
 				if(tp != null) {
 					Tableau tableauCard = (Tableau) release;
-					Main.setMementoTableau(tableauCard);
 					if(!tp.noCard()) {
-						tableauCard.moveWaste(tp, card);
+						boolean canMove = tableauCard.moveWaste(tp, card);
+						// if ( canMove == true ) {
+						// 	System.out.println("tableauCard.moveWaste: " + canMove);
+						// 	Main.addToBackgroundArray(backgroundMemento);
+						// }
 					}
 					tp.repaint();
 					
@@ -100,28 +107,33 @@ public class CardMoveListener extends MouseInputAdapter {
 				else if(tableaucard != null) {
 					Tableau src = tableaucard;
 					Tableau dest = (Tableau) release;
-
-					Main.setMementoTableau(dest);
+					
+					boolean canMove = src.moveTo(dest, card);
+					// if ( canMove == true ) {
+					// 	System.out.println("tableauCard.moveTo: " + canMove);
+					// 	Main.addToBackgroundArray(backgroundMemento);
+					// }
 					src.moveTo(dest, card);
 					src.repaint();
 				}
 				else if(foundationPile != null) {	
 					Foundation src = foundationPile;
 					Tableau dest = (Tableau)release;
-
-					Main.setMementoTableau(dest);
+					// Main.addToBackgroundArray(backgroundMemento);
 					src.moveTo(dest, card);
 					src.repaint();
 					dest.repaint();
 				}
 			}
+			// bg = Main.getMainBG();
+			
+			// Background bg = Main.getMainBG();
+			// Background backgroundMemento = new Background(bg);
+			
 		}
-		
-		bg = Main.getMainBG();
-
-		Background backgroundMemento = new Background(bg);
-		Main.addToBackgroundArray(backgroundMemento);
-
+		if ( Main.easyHard == 0 ) {
+			Main.addToBackgroundArray(backgroundMemento);
+		}
 		e.getComponent().repaint();
 		card = null;
 		foundationPile = null;

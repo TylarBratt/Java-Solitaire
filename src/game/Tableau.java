@@ -20,7 +20,7 @@ public class Tableau extends Pile implements Cloneable{
 
 	public Tableau(int position_x, int position_y, int size, Background bg) {
 		super(position_x, position_y);
-		super.setSize(84, 600);
+		super.setSize(84, 600); //previously 600
 		super.setOpaque(false);
 		for(int i = 0; i < size; i++) {
 			push(bg.getStockPile().pop());
@@ -69,12 +69,13 @@ public class Tableau extends Pile implements Cloneable{
 		}
 	}
 
-	public void moveWaste(TalonPile tp, Card card) {
+	public boolean moveWaste(TalonPile tp, Card card) {
 		
 		if(this.accepts(card)) {
 			this.push(tp.pop());
+			return true;
 		}
-		
+		return false;
 	}
 
 	public boolean accepts(Card card) {
@@ -120,26 +121,27 @@ public class Tableau extends Pile implements Cloneable{
 
 	
 	
-	public void moveTo(Tableau destination, Card card) {
-			if (!this.noCard() || card.getValue() == 13) {
-			     if (destination.accepts(card)) {
-                      Deque<Card> toBeMovedCards = new ArrayDeque<>();
-                      while(!this.noCard()) {
-                	      Card tmp = this.pop();
-                	      toBeMovedCards.push(tmp);
-                	      if(tmp.equals(card)) {
-                		    break;
-                	      }
-                      }
-                      while(!toBeMovedCards.isEmpty()) {
-                	      destination.push(toBeMovedCards.pop());
-                      
-					  }
-			     }
-		     }
-		     if(!this.noCard()) {
-			     this.topCard().showFace();
-		     }
+	public boolean moveTo(Tableau destination, Card card) {
+		if(!this.noCard()) {
+			this.topCard().showFace();
+		}
+		if (!this.noCard() || card.getValue() == 13) {
+			if (destination.accepts(card)) {
+                Deque<Card> toBeMovedCards = new ArrayDeque<>();
+                    while(!this.noCard()) {
+                	    Card tmp = this.pop();
+                	    toBeMovedCards.push(tmp);
+                	    if(tmp.equals(card)) {
+                			break;
+                	    }
+                    }
+                    while(!toBeMovedCards.isEmpty()) {
+                	    destination.push(toBeMovedCards.pop());
+                    }
+					return true;
+			    }
+		    }
+		return false;
      }
 	 
 	 public Object clone() throws CloneNotSupportedException

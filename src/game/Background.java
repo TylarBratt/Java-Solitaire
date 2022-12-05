@@ -6,9 +6,6 @@ import java.awt.Graphics;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
-import javax.swing.JButton;
-
-import javax.swing.*;  
 
 public class Background extends JPanel{
 

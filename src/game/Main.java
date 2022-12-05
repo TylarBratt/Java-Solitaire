@@ -159,7 +159,6 @@ public class Main extends JFrame implements KeyListener {
 			
 				bg.add(undoButton);
 				add(bg);
-				System.out.println("bg in Main after add: " + bg);
 				validate();
 			}
 			else {
@@ -167,34 +166,71 @@ public class Main extends JFrame implements KeyListener {
 				mementoBackgroundArray = new ArrayList<Background>();
 				easyHard = 0;
 				
+				//remove components
 				bg.removeAll();
+
+				//remove background
 				remove(bg);
+				
 				bg = new Background();
-				System.out.println("bg in Main: " + bg);
-				remove(Main.st);
 				initializePiles(bg);
+				
+				//add initial state to mementoBackgroundArray
+				Background initialBackground = new Background(bg);
+				addToBackgroundArray(initialBackground);
+
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						// new Thread() {
-						// 	public void run(){
+						new Thread() {
+							public void run(){
+								System.out.println("undo button pressed");
+
 								int mementoBackgroundArraySize = mementoBackgroundArray.size();
-								if ( mementoBackgroundArraySize <= 1 ) {
+								System.out.println("memento array size: " + mementoBackgroundArraySize);
+								if ( mementoBackgroundArraySize < 2 ) {
 									System.out.println("No moves to be made");
 								}
 								else {
-									bg = mementoBackgroundArray.get(mementoBackgroundArray.size()-2);
-									mementoBackgroundArray.remove(mementoBackgroundArray.size()-1);
+									remove(bg);
 
+									int index = mementoBackgroundArraySize - 2;
+									
+									//clone item out of ArrayList
+									bg = new Background(mementoBackgroundArray.get(index));
+
+									if ( mementoBackgroundArraySize > 1 ) {
+										mementoBackgroundArray.remove(mementoBackgroundArraySize-1);
+									}
+									bg.add(bg.getTpPile());
+									bg.add(bg.getStockPile());
+
+									for (int i = 0; i<bg.getTableauArray().length; i++) {
+										bg.add(bg.getTableauArray()[i]);
+									}
+
+									for (int i = 0; i<bg.getFoundationArray().length; i++) {
+										bg.add(bg.getFoundationArray()[i]);
+									}
+
+									bg.add(undoButton);
+									bg.add(bg.gameTimer);
+									bg.addMouseListener(game);
+									bg.addMouseMotionListener(game);
+
+									bg.add(bestTimePanel);
+									
 									add(bg);
+
 									bg.revalidate();
 									bg.repaint();
 								}
-						// 	}
-						// }.start();
+							}
+				
+						}.start();
 					}
 				});
 			
@@ -211,14 +247,25 @@ public class Main extends JFrame implements KeyListener {
 				easyHard = 1;
 				remove(st);
 				bg = new Background();
+				initializePiles(bg);
+				CardMoveListener game = new CardMoveListener();
+				bg.addMouseListener(game);
+				bg.addMouseMotionListener(game);
+				
 				remove(Main.st);
 				add(bg);
+				
 				revalidate();
 			}
 			else {
 				easyHard = 1;
 				remove(bg);
 				bg = new Background();
+				initializePiles(bg);
+				CardMoveListener game = new CardMoveListener();
+				bg.addMouseListener(game);
+				bg.addMouseMotionListener(game);
+				
 				remove(Main.st);
 				add(bg);
 				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);

@@ -1,12 +1,7 @@
 package game;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.*;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import javax.swing.*;
 
 public class UndoButton extends JButton{
