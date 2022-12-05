@@ -156,7 +156,7 @@ public class CardMoveListener extends MouseInputAdapter {
 			gameTimer = bg.getGameTimer();
 			gameTimer.stopTimer();
 			String playerTime = gameTimer.getCurrentTime();
-			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 275, 300, 250, 125, 0);
+			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 250, 300, 250, 125, 0);
 			pressed.getParent().add(wp);
 			if ( Main.getBestNormalizedTime() > gameTimer.getNormalizedTime() ) {
 				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
