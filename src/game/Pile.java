@@ -19,6 +19,21 @@ public class Pile extends JPanel{
 	public Pile(int position_x, int position_y) {
 		super.setLocation(position_x, position_y);
 		cards = new Stack<>();
+		this.setPositionX(position_x);
+		this.setPositionY(position_y);
+	}
+
+	//cloning constructor for undo
+	public Pile(Pile other) {
+		
+		super.setLocation(other.getPositionX(), other.getPositionY());
+		this.setPositionX(other.getPositionX());
+		this.setPositionY(other.getPositionY());
+		this.cards = new Stack<Card>();
+		for ( Card card : other.cards) {
+			Card cloned_card = (Card) card.clone();
+			this.cards.push(cloned_card);
+		}
 	}
 	
 	public Card topCard()
@@ -44,5 +59,29 @@ public class Pile extends JPanel{
 	}
 	public boolean noCard() {
 		return this.cards.isEmpty();
+	}
+
+	public Stack<Card> getCards() {
+		return this.cards;
+	}
+
+	public void setCards(Stack<Card> cards) {
+		this.cards = cards;
+	}
+
+	public int getPositionX(){
+		return this.position_x;
+	}
+
+	public int getPositionY(){
+		return this.position_y;
+	}
+
+	public void setPositionX(int position_x){
+		this.position_x = position_x;
+	}
+
+	public void setPositionY(int position_y){
+		this.position_y = position_y;
 	}
 }

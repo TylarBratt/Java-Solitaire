@@ -6,11 +6,8 @@ import java.awt.Graphics;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
-import javax.swing.JButton;
 
-import javax.swing.*;  
-
-public class Background extends JLayeredPane{
+public class Background extends JPanel{
 
 	/**
 	 * This class draws a green background on the window. 
@@ -21,63 +18,83 @@ public class Background extends JLayeredPane{
 	
 	public static Point TABLEAU_POSITION = new Point(20, 150);
 	public static int TABLEAU_OFFSET = 100;
-	private static StockPile sp;
-	private static TalonPile tp;
-	private static GameTimer gameTimer;
-	private static WinPanel wp;
-	private static Foundation[] foundation;
-	private static Tableau[] tableau;
+	public StockPile sp;
+	public TalonPile tp;
+	public GameTimer gameTimer;
+	public Foundation[] foundationArray;
+	public Tableau[] tableauArray;
 	public CardMoveListener game;
-	public static boolean playerWon = false;
+	public boolean playerWon = false;
 	
 
 	public Background() {
 		super.setLayout(null);
-		initializePiles();
+		//initializePiles();
 		initializeGameTimer();
-		game = new CardMoveListener();
-		addMouseListener(game);
-		addMouseMotionListener(game);
+	}
+
+	public Background(Background other) {
+		super.setLayout(null);
+		
+		StockPile clonedSP = new StockPile(other.getStockPile());
+		this.setStockPile(clonedSP);
+		
+		TalonPile clonedTP = new TalonPile(other.getTpPile());
+		this.setTalonPile(clonedTP);
+
+		this.foundationArray = new  Foundation[4];
+		for (int i = 0; i<other.getFoundationArray().length; i++) {
+			Foundation currentFoundation = new Foundation(other.getFoundationArray()[i]);
+			// System.out.println(currentFoundation);
+			this.foundationArray[i] = currentFoundation;
+		}
+		
+		this.tableauArray = new Tableau[7];
+		for (int i = 0; i<other.getTableauArray().length; i++) {
+			Tableau currentTableau = new Tableau(other.getTableauArray()[i]);
+			this.tableauArray[i] = currentTableau;
+		}
+		this.game = other.game;
+		this.playerWon = other.playerWon;
+		this.gameTimer = other.gameTimer;
 	}
 
 	private void initializeGameTimer() {
 		gameTimer = new GameTimer("Time challenge", 625, 550, 125, 50, 0);
 		add(gameTimer);
 	}
-
-	private void initializePiles() {
-		sp = new StockPile(650, 15);
-		add(sp);
-		tp = new TalonPile(650 - tpShift, 15);
-		add(tp);
-		foundation = new Foundation[4];
-		for(int i = 0; i < foundation.length; i++) {
-			foundation[i] = new Foundation(20 + tpShift * i, 20, i + 1);
-			add(foundation[i]);
-		}
-		tableau = new Tableau[7];
-		for(int k = 1; k <= tableau.length; k++) {
-			tableau[k - 1] = new Tableau(TABLEAU_POSITION.x + TABLEAU_OFFSET * (k - 1), TABLEAU_POSITION.y, k + 1);
-			add(tableau[k - 1]);
-		}
-	}
 		
-	public static Foundation[] getFoundation() {
-		return foundation;
+	public Foundation[] getFoundationArray() {
+		return this.foundationArray;
 	}
 
-	public static TalonPile getTpPile() {
-		return tp;
+	public Tableau[] getTableauArray() {
+		return this.tableauArray;
 	}
+
+
+	public TalonPile getTpPile() {
+		return this.tp;
+	}
+
+	public void setTalonPile(TalonPile talonpile) {
+		this.tp = talonpile;
+	}
+	
 	
 
-	public static StockPile getStockPile() {
-		return sp;
+	public StockPile getStockPile() {
+		return this.sp;
+	}
+
+	public void setStockPile(StockPile stockpile) {
+		this.sp = stockpile;
 	}
 	
-	public static GameTimer getGameTimer() {
-		return gameTimer;
+	public GameTimer getGameTimer() {
+		return this.gameTimer;
 	}
+
 
 	@Override
 	protected void paintComponent(Graphics a) {

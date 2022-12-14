@@ -26,7 +26,14 @@ public class StockPile extends Pile{
 			}
 		}
 		//enable shuffle in production mode
-		//Collections.shuffle(cards);
+		Collections.shuffle(cards);
+	}
+
+	public StockPile(StockPile other) {
+		super(other);
+		super.setSize(84, 112);
+		super.setPositionX(other.getPositionX());
+		super.setPositionY(other.getPositionY());
 	}
 
 	public void takeTalon(TalonPile talonPile) {
