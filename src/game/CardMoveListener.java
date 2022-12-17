@@ -137,13 +137,9 @@ public class CardMoveListener extends MouseInputAdapter {
 								tableauCard.moveWaste(tp, etp, card);
 						Main.increaseScore(5);
 						scorePanel.setScoreText(Main.score);	
-						}else {
-					
-						}
-						
-						
-						
-							
+						} else {
+							tableauCard.moveWaste(tp, card);
+						}			
 					}
 					tp.repaint();
 					
