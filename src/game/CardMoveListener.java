@@ -51,21 +51,53 @@ public class CardMoveListener extends MouseInputAdapter {
 		}
 		
 		else if(pressed instanceof StockPile) {
-			sp = bg.getStockPile();
-			tableaucard = null;
-			if(!sp.noCard()) {
+			if (Main.easyHard != 2) {
+				sp = bg.getStockPile();
+				tableaucard = null;
+				if(!sp.noCard()) {
+					TalonPile tp = bg.getTpPile();
+					tp.push(sp.pop());
+					bg.setTalonPile(tp);
+					tp.topCard().showFace();
+					}
+				else {
+					TalonPile tp = bg.getTpPile();
+					System.out.println("Stock pile is empty");
+					sp.takeTalon(tp);
+					}
+			}else if(Main.easyHard == 2){
 				TalonPile tp = bg.getTpPile();
-				tp.push(sp.pop());
-				bg.setTalonPile(tp);
-				tp.topCard().showFace();
+				ExtraTalonPile etp = bg.getEtpPile();
+				sp = bg.getStockPile();
+//first thing we do is initialize the piles and move the card from the talon to the extra talon.
+				if (!tp.noCard() ) {
+					etp.push(tp.pop());
+					e.getComponent().repaint();
+				}
+//this algorithm didnt work it has been rethought. It needs to first check if there is an available card in the stock pile then it needs to move the talon pile card to the extra talon pile. Then it needs to loop 3 times to grab 3 cards from the stockpile but check every single time. if it does not it should break the loop and then move the top card from the extra pile into the talon pile. I frankly think that after every card move e. should be repainted.
+//we actually need two loops nested. One will do the first move and if it can't then it will reshuffle the extra pile. If it can do the first move itll move then move onto the second. and attempt to check and do the second and third move. If not possible it should break the whole if statement and end with sending the top card of the extra pile to the talon pile.
+					if(!sp.noCard()) {
+					etp.push(sp.pop());
+						outer:for (int i = 0; i < 2; i++) {
+									if(!sp.noCard()) {
+										etp.push(sp.pop());
+										}else {
+										break outer;
+										}
+									}
+						tp.push(etp.pop());
+						}else {
+						ExtraTalonPile etp2 = bg.getEtpPile();
+						System.out.println("Stock pile is empty");
+						sp.takeTalon(etp2);
+						}
+					e.getComponent().repaint();		
 			}
-			else {
-				TalonPile tp = bg.getTpPile();
-				System.out.println("Stock pile is empty");
-				sp.takeTalon(tp);
-			}
+			
+			
 		}
-		
+			
+			
 		else if(pressed instanceof TalonPile) {
 			
 			tableaucard = null;
@@ -102,9 +134,18 @@ public class CardMoveListener extends MouseInputAdapter {
 					System.out.println("From talon pile");
 					Tableau tableauCard = (Tableau) release;
 					if(!tp.noCard()) {
-						tableauCard.moveWaste(tp, card);
+						if(Main.easyHard == 2) {
+							ExtraTalonPile etp = bg.getEtpPile();
+								tableauCard.moveWaste(tp, etp, card);
 						Main.increaseScore(5);
 						scorePanel.setScoreText(Main.score);	
+						}else {
+					
+						}
+						
+						
+						
+							
 					}
 					tp.repaint();
 					

@@ -35,15 +35,31 @@ public class Foundation extends Pile implements Cloneable{
 	}
 
 	public boolean moveWaste(TalonPile tp, Card card) {
-	
 		if(accepts(card)) {
 			this.push(tp.pop());
+			if (Main.easyHard == 2) {
+				Background bg = Main.getMainBG();
+				ExtraTalonPile etp = bg.getEtpPile();
+				tp.push(etp.pop());
+				this.topCard().showFace();
+			}
 			tp = null;
 			return true;
 		}
 		return false;
 	}
-	
+	public boolean moveWaste(TalonPile tp, ExtraTalonPile etp, Card card) {
+		
+		if(accepts(card)) {
+			this.push(tp.pop());
+			if(Main.easyHard == 2) {
+				tp.push(etp.pop());
+				this.topCard().showFace();
+				}
+			return true;
+		}
+		return false;
+	}
 	public void moveTo(Tableau dest, Card card) {
 		if(dest.accepts(card)) {
 			dest.push(this.pop());

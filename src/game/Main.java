@@ -87,6 +87,7 @@ public class Main extends JFrame implements KeyListener {
 		char start = 'e';
 		char hard = 'r';
 		char j = 'j';
+		char vegas = 't';
 		
 		
 		//System.out.println("The Key Pressed was: " + a);
@@ -301,6 +302,36 @@ public class Main extends JFrame implements KeyListener {
 				bg.add(bestTimePanel);
 				revalidate();
 			}
+		} else if(a == vegas) {
+			if (  bg == null ) {
+				easyHard = 2;
+				remove(st);
+				bg = new Background();
+				initializePiles(bg);
+				CardMoveListener game = new CardMoveListener();
+				bg.addMouseListener(game);
+				bg.addMouseMotionListener(game);
+				
+				remove(Main.st);
+				add(bg);
+				
+				revalidate();
+			}
+			else {
+				easyHard = 2;
+				remove(st);
+				bg = new Background();
+				initializePiles(bg);
+				CardMoveListener game = new CardMoveListener();
+				bg.addMouseListener(game);
+				bg.addMouseMotionListener(game);
+				
+				remove(Main.st);
+				add(bg);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
+				bg.add(bestTimePanel);
+				revalidate();
+			}
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			System.exit(0);
 		}	
@@ -324,6 +355,11 @@ public class Main extends JFrame implements KeyListener {
 		TalonPile tp = new TalonPile(650 - tpShift, 15);
 		bg.add(tp);
 		bg.tp = tp;
+		if(Main.easyHard == 2) {
+			ExtraTalonPile etp = new ExtraTalonPile(575 - tpShift, 15, 80, 112);
+		bg.add(etp);
+		bg.etp = etp;
+		}
 		Foundation[] foundation = new Foundation[4];
 		for(int i = 0; i < foundation.length; i++) {
 			foundation[i] = new Foundation(20 + tpShift * i, 20, i + 1);
