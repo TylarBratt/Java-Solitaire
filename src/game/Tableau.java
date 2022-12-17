@@ -77,6 +77,20 @@ public class Tableau extends Pile implements Cloneable{
 		}
 		return false;
 	}
+	
+	public boolean moveWaste(TalonPile tp, ExtraTalonPile etp, Card card) {
+		
+		if(accepts(card)) {
+			this.push(tp.pop());
+			if(Main.easyHard == 2 && !etp.noCard()) {
+				tp.push(etp.pop());
+				tp.topCard().showFace();
+				}
+			this.topCard().showFace();
+			return true;
+		}
+		return false;
+	}
 
 	public boolean accepts(Card card) {
 		if(!this.noCard()) {
