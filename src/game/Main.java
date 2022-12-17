@@ -27,7 +27,7 @@ public class Main extends JFrame implements KeyListener {
 	static protected int bestNormalizedTime = 100000;
 	static protected String playerTime = "";
 	static protected int score;
-	static protected int bestScore;
+	static protected int highScore;
 
 	protected CardMoveListener mainCardMoveListener;
 	protected BestTimePanel bestTimePanel;
@@ -368,6 +368,14 @@ public class Main extends JFrame implements KeyListener {
 
 	public static ScorePanel getScorePanel() {
 		return scorePanel;
+	}
+
+	public static void setHighScore(int newHighScore) {
+		highScore = newHighScore;
+	}
+
+	public static int getHighScore() {
+		return highScore;
 	}
 }
 
