@@ -35,4 +35,8 @@ public class BestTimePanel extends JButton{
 		return this.hours*3600 + this.minutes*60 + this.seconds;
 	}
 
+	public void setTimeText(String playerTime){
+		setText("<html><center>Best Time<br />" + playerTime +"</center></html>");
+	}
+
 }

@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.event.MouseEvent;
 import javax.swing.event.MouseInputAdapter;
 import java.util.Stack;
-import java.util.ArrayList;
 
 public class CardMoveListener extends MouseInputAdapter {
 
@@ -12,7 +11,6 @@ public class CardMoveListener extends MouseInputAdapter {
 	private StockPile sp = null;
 	private TalonPile tp = null;
 	private WinPanel wp = null;
-	private BestTimePanel bestTimePanel = null; 
 	private Card card = null;
 	private Tableau tableaucard = null;
 	private Foundation foundationPile = null;
@@ -159,12 +157,20 @@ public class CardMoveListener extends MouseInputAdapter {
 			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 250, 300, 250, 125, 0);
 			pressed.getParent().add(wp);
 			if ( Main.getBestNormalizedTime() > gameTimer.getNormalizedTime() ) {
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 515 , 125, 50, 0);
+				//bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 515 , 125, 50, 0);
 				Main.bestNormalizedTime = gameTimer.getNormalizedTime();
 				Main.setPlayerWon(true);
 				Main.setPlayerTime(playerTime);
-				pressed.getParent().add(bestTimePanel);
+				//pressed.getParent().add(bestTimePanel);
 			}
+
+			
+			if ( Main.getScore() > Main.getHighScore()) {
+				int highScore = Integer.valueOf(Main.getScore());
+				Main.setHighScore(highScore);
+				System.out.println("highScore: " + highScore);
+			}
+			
 			return true;	
 		}
 		else {

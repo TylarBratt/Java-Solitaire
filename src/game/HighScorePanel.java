@@ -15,7 +15,7 @@ public class HighScorePanel extends JLabel{
         setText(text);
 		setBackground(Color.pink);
         setOpaque(true);
-		System.out.println("Added score panel");
+		System.out.println("Added high score panel");
 	}
 
     public void setScoreText(int score) {

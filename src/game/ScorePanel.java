@@ -15,7 +15,6 @@ public class ScorePanel extends JLabel{
         setText(text);
 		setBackground(Color.pink);
         setOpaque(true);
-		System.out.println("Added score panel");
 	}
 
     public void setScoreText(int score) {
