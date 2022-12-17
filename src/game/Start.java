@@ -25,9 +25,6 @@ public class Start extends JPanel {
 	public Start() {
 		image = getStart();
 		super.setLayout(null);
-		
-		
-		
 	}
 
 

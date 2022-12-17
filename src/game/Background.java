@@ -20,6 +20,7 @@ public class Background extends JPanel{
 	public static int TABLEAU_OFFSET = 100;
 	public StockPile sp;
 	public TalonPile tp;
+	public ExtraTalonPile etp;
 	public GameTimer gameTimer;
 	public Foundation[] foundationArray;
 	public Tableau[] tableauArray;
@@ -42,6 +43,11 @@ public class Background extends JPanel{
 		TalonPile clonedTP = new TalonPile(other.getTpPile());
 		this.setTalonPile(clonedTP);
 
+		if (Main.easyHard == 2) {
+			ExtraTalonPile ClonedETP = new ExtraTalonPile(other.getEtpPile());
+			this.setExtraTalonPile(ClonedETP);
+		}
+		
 		this.foundationArray = new  Foundation[4];
 		for (int i = 0; i<other.getFoundationArray().length; i++) {
 			Foundation currentFoundation = new Foundation(other.getFoundationArray()[i]);
@@ -76,12 +82,16 @@ public class Background extends JPanel{
 	public TalonPile getTpPile() {
 		return this.tp;
 	}
-
+	
 	public void setTalonPile(TalonPile talonpile) {
 		this.tp = talonpile;
 	}
-	
-	
+	public ExtraTalonPile getEtpPile() {
+		return this.etp;
+	}
+	public void setExtraTalonPile(ExtraTalonPile extratalonpile) {
+		this.etp = extratalonpile;
+	}
 
 	public StockPile getStockPile() {
 		return this.sp;
