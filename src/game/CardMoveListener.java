@@ -167,8 +167,10 @@ public class CardMoveListener extends MouseInputAdapter {
 			Main.addToBackgroundArray(backgroundMemento);
 		}
 		
-		Integer scoreMemento = new Integer(Main.score);
-		Main.addToScoreArray(scoreMemento);
+		if ( Main.easyHard == 0 ) {
+		Integer scoreMemento = new Integer(Main.score);	
+			Main.addToScoreArray(scoreMemento);
+		}
 		e.getComponent().repaint();
 		card = null;
 		foundationPile = null;

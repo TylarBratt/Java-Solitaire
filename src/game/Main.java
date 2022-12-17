@@ -306,6 +306,16 @@ public class Main extends JFrame implements KeyListener {
 				easyHard = 1;
 				remove(st);
 				bg = new Background();
+				
+				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
+				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
+				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				
+				bg.add(bestTimePanel);
+				bg.add(highScorePanel);
+				bg.add(scorePanel);
 				initializePiles(bg);
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
@@ -335,8 +345,19 @@ public class Main extends JFrame implements KeyListener {
 			if (  bg == null ) {
 				easyHard = 2;
 				remove(st);
+				
 				bg = new Background();
 				initializePiles(bg);
+				
+				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
+				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
+				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				
+				bg.add(bestTimePanel);
+				bg.add(highScorePanel);
+				bg.add(scorePanel);
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
@@ -348,7 +369,7 @@ public class Main extends JFrame implements KeyListener {
 			}
 			else {
 				easyHard = 2;
-				remove(st);
+				remove(bg);
 				bg = new Background();
 				initializePiles(bg);
 				CardMoveListener game = new CardMoveListener();
