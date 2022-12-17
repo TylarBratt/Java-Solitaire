@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Point;
@@ -27,10 +26,11 @@ public class Main extends JFrame implements KeyListener {
 	static protected int bestNormalizedTime = 100000;
 	static protected String playerTime = "";
 	static protected int score;
-	static protected int bestScore;
+	static protected int highScore;
 
 	protected CardMoveListener mainCardMoveListener;
 	protected BestTimePanel bestTimePanel;
+	protected HighScorePanel highScorePanel;
 	protected static ScorePanel scorePanel;
 	private static UndoButton undoButton;
 
@@ -98,6 +98,7 @@ public class Main extends JFrame implements KeyListener {
 				mementoBackgroundArray = new ArrayList<Background>();
 				mementoScoreArray = new ArrayList<Integer>();
 				score = 0;
+				highScore = 0;
 				easyHard = 0;
 				if ( bg != null) {
 					remove(bg);
@@ -195,7 +196,7 @@ public class Main extends JFrame implements KeyListener {
 				//clear undo array
 				mementoBackgroundArray = new ArrayList<Background>();
 				easyHard = 0;
-				
+				score = 0;
 				//remove components
 				bg.removeAll();
 
@@ -212,6 +213,16 @@ public class Main extends JFrame implements KeyListener {
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
+				
+				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
+				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
+				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				
+				bg.add(bestTimePanel);
+				bg.add(highScorePanel);
+				bg.add(scorePanel);
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -231,9 +242,20 @@ public class Main extends JFrame implements KeyListener {
 									
 									//clone item out of ArrayList
 									bg = new Background(mementoBackgroundArray.get(index));
-
+									
+									//go through score array and decrease all scores by 2 to reflect cost of Undo action
+									for ( int i = 0; i < mementoBackgroundArraySize-1; i++ ) {
+										Integer currentScore = mementoScoreArray.get(i);
+										int newScore = Integer.valueOf(currentScore) - 2;
+										Integer newScoreInteger = new Integer(newScore);
+										mementoScoreArray.set(i, newScoreInteger);
+										System.out.println("decreased score: " + newScoreInteger);
+									}
+									
+									score = new Integer(mementoScoreArray.get(index));
 									if ( mementoBackgroundArraySize > 1 ) {
 										mementoBackgroundArray.remove(mementoBackgroundArraySize-1);
+										mementoScoreArray.remove(mementoBackgroundArraySize-1);
 									}
 									bg.add(bg.getTpPile());
 									bg.add(bg.getStockPile());
@@ -246,13 +268,17 @@ public class Main extends JFrame implements KeyListener {
 										bg.add(bg.getFoundationArray()[i]);
 									}
 
+									scorePanel.setScoreText(score);
+									highScorePanel.setScoreText(highScore);
+									bestTimePanel.setTimeText(playerTime);
 									bg.add(undoButton);
+									bg.add(scorePanel);
+									bg.add(highScorePanel);
+									bg.add(bestTimePanel);
 									bg.add(bg.gameTimer);
 									bg.addMouseListener(game);
 									bg.addMouseMotionListener(game);
 
-									bg.add(bestTimePanel);
-									
 									add(bg);
 
 									bg.revalidate();
@@ -264,8 +290,11 @@ public class Main extends JFrame implements KeyListener {
 					}
 				});
 			
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
+				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
+				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
 				bg.add(bestTimePanel);
+				bg.add(highScorePanel);
 				bg.add(undoButton);
 				add(bg);
 				validate();
@@ -404,6 +433,22 @@ public class Main extends JFrame implements KeyListener {
 
 	public static ScorePanel getScorePanel() {
 		return scorePanel;
+	}
+
+	public static void setHighScore(int newHighScore) {
+		highScore = newHighScore;
+	}
+
+	public static int getHighScore() {
+		return highScore;
+	}
+
+	public static int getScore() {
+		return score;
+	}
+
+	public static void setScore(int resetScore) {
+		score = resetScore;
 	}
 }
 
