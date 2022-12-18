@@ -22,6 +22,7 @@ public class CardMoveListener extends MouseInputAdapter {
 		
 		Background bg = Main.getMainBG();
 		ScorePanel scorePanel = Main.getScorePanel();
+		ScorePanel vegasScorePanel = Main.getVegasScorePanel();
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
 
 		if(pressed instanceof Foundation) {
@@ -39,8 +40,14 @@ public class CardMoveListener extends MouseInputAdapter {
 				card = tableaucard.getTableauCardClick(e.getY() - 150);
 				for(Foundation foundation : bg.getFoundationArray()) {
 					if( tableaucard.moveTo(foundation, card) ) {
-						Main.increaseScore(10);
-						scorePanel.setScoreText(Main.score);	
+						if ( Main.easyHard == 0 ) {
+							Main.increaseScore(10);
+							scorePanel.setScoreText(Main.score);	
+						}
+						else if ( Main.easyHard == 2 ) {
+							Main.increaseVegasScore(10);
+							vegasScorePanel.setScoreText(Main.vegasScore);
+						} 
 						tableaucard = null;
 						break;
 					}	
@@ -56,60 +63,84 @@ public class CardMoveListener extends MouseInputAdapter {
 					TalonPile tp = bg.getTpPile();
 					tp.push(sp.pop());
 					bg.setTalonPile(tp);
-					tp.topCard().showFace();
+					if ( tp.topCard() != null ) {
+						tp.topCard().showFace();
+						}
 					}
 				else {
 					TalonPile tp = bg.getTpPile();
 					System.out.println("Stock pile is empty");
 					sp.takeTalon(tp);
 					}
-			}else if(Main.easyHard == 2){
+			
+			} else if ( Main.easyHard == 2 ){
 				TalonPile tp = bg.getTpPile();
 				ExtraTalonPile etp = bg.getEtpPile();
 				sp = bg.getStockPile();
-//first thing we do is initialize the piles and move the card from the talon to the extra talon.
-				if (!tp.noCard() ) {
-					etp.push(tp.pop());
+				//first thing we do is initialize the piles and move the card from the talon to the extra talon.
+				if (!tp.noCard() && sp.cards.size() != 0) {
+					//System.out.println("tp.pop() card: " + tp.pop());
+					Card tpCard = tp.pop();
+					if ( tpCard != null ) {
+						etp.push(tpCard);
+					}
 					e.getComponent().repaint();
 				}
-//this algorithm didnt work it has been rethought. It needs to first check if there is an available card in the stock pile then it needs to move the talon pile card to the extra talon pile. Then it needs to loop 3 times to grab 3 cards from the stockpile but check every single time. if it does not it should break the loop and then move the top card from the extra pile into the talon pile. I frankly think that after every card move e. should be repainted.
-//we actually need two loops nested. One will do the first move and if it can't then it will reshuffle the extra pile. If it can do the first move itll move then move onto the second. and attempt to check and do the second and third move. If not possible it should break the whole if statement and end with sending the top card of the extra pile to the talon pile.
-					if(!sp.noCard()) {
+				/*this algorithm didnt work it has been rethought. It needs to first check if there is an available card in the 
+				stock pile then it needs to move the talon pile card to the extra talon pile. Then it needs to loop 3 times to grab 3 cards 
+				from the stockpile but check every single time. if it does not it should break the loop and then move the top card from the extra pile 
+				into the talon pile. I frankly think that after every card move e. should be repainted.
+				we actually need two loops nested. One will do the first move and if it can't then it will reshuffle the extra pile. 
+				If it can do the first move itll move then move onto the second. and attempt to check and do the second and third move. 
+				If not possible it should break the whole if statement and end with sending the top card of the extra pile to the talon pile.*/
+				if(!sp.noCard()) {
 					etp.push(sp.pop());
 						outer:for (int i = 0; i < 2; i++) {
-									if(!sp.noCard()) {
-										etp.push(sp.pop());
-										}else {
-										break outer;
-										}
-									}
-						tp.push(etp.pop());
-						}else {
-						ExtraTalonPile etp2 = bg.getEtpPile();
-						System.out.println("Stock pile is empty");
-						sp.takeTalon(etp2);
+							if(!sp.noCard()) {
+								etp.push(sp.pop());
+							} else {
+								break outer;
+							}
 						}
-					e.getComponent().repaint();		
-			}
-			
-			
+					//make dummy card to fill out third card in set of three for etp
+					// System.out.println("etp.cards.size() " + etp.cards.size());
+					// if ( etp.cards.size() > 2) {
+					// 	System.out.println("in dummy card section of cardhandler");
+					// 	Card dummyCard = (Card ) etp.cards.get(etp.cards.size()-3);
+					// 	bg.dummyEtp.push(dummyCard);
+					// }
+					tp.push(etp.pop());
+
+				} else {
+					sp.push(tp.pop());
+					sp.takeTalon(etp);
+				}
+				e.getComponent().repaint();		
+			}			
 		}
-			
-			
+				
 		else if(pressed instanceof TalonPile) {
 			
 			tableaucard = null;
 			tp = bg.getTpPile();
 			card = tp.topCard();
-
+			System.out.println("Pressed talonpile");
 			if(card != null) {
 				for(Foundation foundation : bg.getFoundationArray()) {
 					if ( foundation.moveWaste(tp, card) == true ) {
 						//increase score by 10 points to reflect movement to foundation
-						Main.increaseScore(10);
-						scorePanel.setScoreText(Main.score);				
+						if ( Main.easyHard == 0 ) {
+							Main.increaseScore(10);
+							scorePanel.setScoreText(Main.score);				
+						}
+						else if ( Main.easyHard==2 ) {
+							Main.increaseVegasScore(5);
+							vegasScorePanel.setScoreText(Main.vegasScore);
+						}
+						System.out.println("if ( foundation.moveWaste(tp, card) == true )");
 					}
 				}
+			System.out.println("card != null");
 			}
 		}
 		
@@ -120,7 +151,13 @@ public class CardMoveListener extends MouseInputAdapter {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		Background bg = Main.getMainBG();
-		Background backgroundMemento = new Background(bg);
+		ScorePanel vegasScorePanel = Main.getVegasScorePanel();
+
+		if ( Main.easyHard == 0 ) {
+			Background backgroundMemento = new Background(bg);
+			Main.addToBackgroundArray(backgroundMemento);
+		}
+	
 		ScorePanel scorePanel = Main.getScorePanel();
 		if(card != null) {
 			
@@ -133,11 +170,16 @@ public class CardMoveListener extends MouseInputAdapter {
 					Tableau tableauCard = (Tableau) release;
 					if(!tp.noCard()) {
 						if(Main.easyHard == 2) {
+							System.out.println("tableau to foundation");
+							Main.increaseVegasScore(5);
+							vegasScorePanel.setScoreText(Main.vegasScore);	
 							ExtraTalonPile etp = bg.getEtpPile();
-								tableauCard.moveWaste(tp, etp, card);
-						Main.increaseScore(5);
-						scorePanel.setScoreText(Main.score);	
-						} else {
+							tableauCard.moveWaste(tp, etp, card);
+						}
+	
+						else if ( Main.easyHard == 0 ) {
+							Main.increaseScore(5);
+							scorePanel.setScoreText(Main.score);
 							tableauCard.moveWaste(tp, card);
 						}			
 					}
@@ -164,13 +206,25 @@ public class CardMoveListener extends MouseInputAdapter {
 		}
 		
 		if ( Main.easyHard == 0 ) {
-			Main.addToBackgroundArray(backgroundMemento);
-		}
-		
-		if ( Main.easyHard == 0 ) {
 		Integer scoreMemento = new Integer(Main.score);	
 			Main.addToScoreArray(scoreMemento);
 		}
+
+
+		if ( Main.easyHard == 2 ) {
+			ExtraTalonPile etp = bg.getEtpPile();
+
+			if ( etp.cards.size() > 1) {
+				System.out.println("in dummy card section of cardhandler");
+				Card dummyCard = (Card ) etp.cards.get(etp.cards.size()-2);
+				bg.dummyEtp.pop();
+				bg.dummyEtp.push(dummyCard);
+				}
+				else if (etp.cards.size() < 2) {
+					bg.dummyEtp.pop();
+				}
+		}
+
 		e.getComponent().repaint();
 		card = null;
 		foundationPile = null;
@@ -196,11 +250,9 @@ public class CardMoveListener extends MouseInputAdapter {
 			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 250, 300, 250, 125, 0);
 			pressed.getParent().add(wp);
 			if ( Main.getBestNormalizedTime() > gameTimer.getNormalizedTime() ) {
-				//bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 515 , 125, 50, 0);
 				Main.bestNormalizedTime = gameTimer.getNormalizedTime();
 				Main.setPlayerWon(true);
 				Main.setPlayerTime(playerTime);
-				//pressed.getParent().add(bestTimePanel);
 			}
 
 			

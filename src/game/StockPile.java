@@ -37,20 +37,25 @@ public class StockPile extends Pile{
 
 	public void takeTalon(TalonPile talonPile) {
 		if (Main.easyHard == 0) {
-		int talonPileSize = talonPile.cards.size();
-		for ( int i = 0; i < talonPileSize; i++ ) {
-			Card card = talonPile.pop();
-			this.cards.addElement(card);
+			int talonPileSize = talonPile.cards.size();
+			for ( int i = 0; i < talonPileSize; i++ ) {
+				Card card = talonPile.pop();
+				this.cards.addElement(card);
+				}
+			}
 		}
-	}}
+	
 	public void takeTalon(ExtraTalonPile talonPile) {
 		if (Main.easyHard == 2) {
-		int talonPileSize = talonPile.cards.size();
-		for ( int i = 0; i <= talonPileSize; i++ ) {
-			Card card = talonPile.pop();
-			this.cards.addElement(card);
+			int talonPileSize = talonPile.cards.size();
+			for ( int i = 0; i <= talonPileSize; i++ ) {
+				Card card = talonPile.pop();
+				if ( card != null ) {
+					this.cards.addElement(card);
+					}	
+				}
+			}
 		}
-	}}
 	
 	public void paintComponent(Graphics a) {
 		super.paintComponent(a);

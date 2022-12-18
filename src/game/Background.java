@@ -26,7 +26,7 @@ public class Background extends JPanel{
 	public Tableau[] tableauArray;
 	public CardMoveListener game;
 	public boolean playerWon = false;
-	
+	public ExtraTalonPile dummyEtp;
 
 	public Background() {
 		super.setLayout(null);

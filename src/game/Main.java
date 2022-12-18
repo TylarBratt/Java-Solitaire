@@ -27,12 +27,18 @@ public class Main extends JFrame implements KeyListener {
 	static protected String playerTime = "";
 	static protected int score;
 	static protected int highScore;
+	static protected int vegasScore;
 
 	protected CardMoveListener mainCardMoveListener;
+	
+	/*Easy Mode Variables */
 	protected BestTimePanel bestTimePanel;
 	protected HighScorePanel highScorePanel;
 	protected static ScorePanel scorePanel;
 	private static UndoButton undoButton;
+	
+	/* Vegas Mode Variables */
+	protected static ScorePanel vegasScorePanel;
 
 	protected static int tpShift = 100;
 	public static Point TABLEAU_POSITION = new Point(20, 150);
@@ -345,19 +351,19 @@ public class Main extends JFrame implements KeyListener {
 			if (  bg == null ) {
 				easyHard = 2;
 				remove(st);
-				
+				vegasScore = -52;
 				bg = new Background();
 				initializePiles(bg);
-				
-				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
-				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				System.out.println("sp cards in main at start: " +bg.sp.cards);
+				vegasScorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + vegasScore + "</div></html>", 0, 550, 125, 50);
+				vegasScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
 				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
-				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
-				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				//highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
+				//highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
 				
 				bg.add(bestTimePanel);
-				bg.add(highScorePanel);
-				bg.add(scorePanel);
+				//bg.add(highScorePanel);
+				bg.add(vegasScorePanel);
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
@@ -406,9 +412,12 @@ public class Main extends JFrame implements KeyListener {
 		bg.add(tp);
 		bg.tp = tp;
 		if(Main.easyHard == 2) {
-			ExtraTalonPile etp = new ExtraTalonPile(575 - tpShift, 15, 80, 112);
-		bg.add(etp);
-		bg.etp = etp;
+			ExtraTalonPile etp = new ExtraTalonPile(625 - tpShift, 15, 80, 112);
+			ExtraTalonPile dummyEtp =  new ExtraTalonPile(600 - tpShift, 15, 80, 112);
+			bg.add(etp);
+			bg.etp = etp;
+			bg.add(dummyEtp);
+			bg.dummyEtp = dummyEtp;
 		}
 		Foundation[] foundation = new Foundation[4];
 		for(int i = 0; i < foundation.length; i++) {
@@ -417,9 +426,9 @@ public class Main extends JFrame implements KeyListener {
 		}
 		bg.foundationArray = foundation;
 		Tableau[] tableauArray = new Tableau[7];
-		for(int k = 1; k <= tableauArray.length; k++) {
-			tableauArray[k - 1] = new Tableau(TABLEAU_POSITION.x + TABLEAU_OFFSET * (k - 1), TABLEAU_POSITION.y, k + 1, bg);
-			bg.add(tableauArray[k - 1]);
+		for(int k = 0; k <= tableauArray.length-1; k++) {
+			tableauArray[k] = new Tableau(TABLEAU_POSITION.x + TABLEAU_OFFSET * (k), TABLEAU_POSITION.y, k + 1, bg);
+			bg.add(tableauArray[k]);
 		}
 		bg.tableauArray = tableauArray;
 	}
@@ -454,6 +463,15 @@ public class Main extends JFrame implements KeyListener {
 
 	public static ScorePanel getScorePanel() {
 		return scorePanel;
+	}
+
+	public static ScorePanel getVegasScorePanel() {
+		return vegasScorePanel;
+	}
+
+
+	public static void increaseVegasScore(int increase) {
+		vegasScore += increase;
 	}
 
 	public static void setHighScore(int newHighScore) {

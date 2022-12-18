@@ -4,8 +4,9 @@ import java.util.EmptyStackException;
 import java.util.Stack;
 
 import javax.swing.JPanel;
+import javax.swing.JLayeredPane;
 
-public class Pile extends JPanel{
+public class Pile extends JLayeredPane{
 
 	/**
 	 *this class is used as an abstract class for anything that is built to the screen. 
@@ -44,15 +45,23 @@ public class Pile extends JPanel{
 		
 		return null;
 	}	
+
+	public Card secondCard()
+	{
+		if( this.cards.size() > 1 ) {
+			return this.cards.get(1);	
+		}
+		
+		return null;
+	}	
 	
 	public Card pop() {
 		try {
-	
-		return cards.pop();
-	}catch(EmptyStackException e) {
-		return null;
-	}
+			return cards.pop();
+		} catch (EmptyStackException e) {
+			return null;
 		}
+	}
 	
 	public void push(Card someCard) {
 		this.cards.push(someCard);
