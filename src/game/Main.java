@@ -21,24 +21,39 @@ public class Main extends JFrame implements KeyListener {
 	static protected Background bg = null;
 	public static final int WINDOW_WIDTH = 750;
 	public static final int WINDOW_HEIGHT = 600;
-	
-	static protected boolean playerWon = false;
-	static protected int bestNormalizedTime = 100000;
-	static protected String playerTime = "";
-	static protected int score;
-	static protected int highScore;
-	static protected int vegasScore;
 
 	protected CardMoveListener mainCardMoveListener;
 	
 	/*Easy Mode Variables */
-	protected BestTimePanel bestTimePanel;
-	protected HighScorePanel highScorePanel;
-	protected static ScorePanel scorePanel;
+	static protected int bestEasyNormalizedTime = 100000;
+	static protected String easyPlayerTime = "";
+	protected BestTimePanel easyBestTimePanel;
+	protected HighScorePanel easyHighScorePanel;
+	protected static ScorePanel easyScorePanel;
+	static protected boolean easyPlayerWon = false;
+	static protected int easyScore;
+	static protected int easyHighScore;
 	private static UndoButton undoButton;
+
+	/*Hard Mode Variables */
+	static protected int bestHardNormalizedTime = 100000;
+	static protected String hardPlayerTime = "";
+	protected BestTimePanel hardBestTimePanel;
+	protected HighScorePanel hardHighScorePanel;
+	static protected boolean hardPlayerWon = false;
+	static protected int hardScore;
+	static protected int hardHighScore;
+	protected static ScorePanel hardScorePanel;
 	
 	/* Vegas Mode Variables */
+	static protected int bestVegasNormalizedTime = 100000;
+	static protected String vegasPlayerTime = "";
+	static protected int vegasScore;
+	static protected int vegasHighScore;
 	protected static ScorePanel vegasScorePanel;
+	protected static HighScorePanel vegasHighScorePanel;
+	protected BestTimePanel vegasBestTimePanel;
+	static protected boolean vegasPlayerWon = false;
 
 	protected static int tpShift = 100;
 	public static Point TABLEAU_POSITION = new Point(20, 150);
@@ -96,15 +111,16 @@ public class Main extends JFrame implements KeyListener {
 		char vegas = 't';
 		
 		
-		//System.out.println("The Key Pressed was: " + a);
+		/*Easy Mode*/
+		
 		if(a == start) {
 			//determine if you are coming from start screen or end of a game
-			if (   playerWon == false  ) {
+			if (   easyPlayerWon == false  ) {
 				//clear undo arrays
 				mementoBackgroundArray = new ArrayList<Background>();
 				mementoScoreArray = new ArrayList<Integer>();
-				score = 0;
-				highScore = 0;
+				easyScore = 0;
+				easyHighScore = 0;
 				easyHard = 0;
 				if ( bg != null) {
 					remove(bg);
@@ -120,31 +136,26 @@ public class Main extends JFrame implements KeyListener {
 				addToBackgroundArray(initialBackground);
 				
 				//add initial score to mementoBackgroundArray
-				Integer initialScore = new Integer(score);
+				Integer initialScore = new Integer(easyScore);
 				addToScoreArray(initialScore);
 				
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
-				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
-				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
-				bg.add(scorePanel);
+				easyScorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + easyScore + "</div></html>", 0, 550, 125, 50);
+				easyScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				bg.add(easyScorePanel);
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						new Thread() {
 							public void run(){
-								System.out.println("undo button pressed");
-
 								int mementoBackgroundArraySize = mementoBackgroundArray.size();
-								System.out.println("memento array size: " + mementoBackgroundArraySize);
-								System.out.println("score array size: " + mementoBackgroundArraySize);
 								if ( mementoBackgroundArraySize < 2 ) {
 									System.out.println("No moves to be made");
 								}
 								else {
 									remove(bg);
-
 									int index = mementoBackgroundArraySize - 2;
 									
 									//clone item out of ArrayList
@@ -159,7 +170,7 @@ public class Main extends JFrame implements KeyListener {
 										System.out.println("decreased score: " + newScoreInteger);
 									}
 									
-									score = new Integer(mementoScoreArray.get(index));
+									easyScore = new Integer(mementoScoreArray.get(index));
 									if ( mementoBackgroundArraySize > 1 ) {
 										mementoBackgroundArray.remove(mementoBackgroundArraySize-1);
 										mementoScoreArray.remove(mementoBackgroundArraySize-1);
@@ -175,10 +186,10 @@ public class Main extends JFrame implements KeyListener {
 										bg.add(bg.getFoundationArray()[i]);
 									}
 
-									scorePanel.setScoreText(score);
+									easyScorePanel.setScoreText(easyScore);
 
 									bg.add(undoButton);
-									bg.add(scorePanel);
+									bg.add(easyScorePanel);
 									bg.add(bg.gameTimer);
 									bg.addMouseListener(game);
 									bg.addMouseMotionListener(game);
@@ -202,7 +213,7 @@ public class Main extends JFrame implements KeyListener {
 				//clear undo array
 				mementoBackgroundArray = new ArrayList<Background>();
 				easyHard = 0;
-				score = 0;
+				easyScore = 0;
 				//remove components
 				bg.removeAll();
 
@@ -220,15 +231,15 @@ public class Main extends JFrame implements KeyListener {
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				
-				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
-				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
-				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
-				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				easyScorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + easyScore + "</div></html>", 0, 550, 125, 50);
+				easyScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				easyBestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + easyPlayerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				easyHighScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + easyHighScore + "</div></html>", 125, 550, 125, 50);
+				easyHighScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
 				
-				bg.add(bestTimePanel);
-				bg.add(highScorePanel);
-				bg.add(scorePanel);
+				bg.add(easyBestTimePanel);
+				bg.add(easyHighScorePanel);
+				bg.add(easyScorePanel);
 				undoButton = new UndoButton("Undo last move", 300, 500, 125, 50);
 				undoButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -258,7 +269,7 @@ public class Main extends JFrame implements KeyListener {
 										System.out.println("decreased score: " + newScoreInteger);
 									}
 									
-									score = new Integer(mementoScoreArray.get(index));
+									easyScore = new Integer(mementoScoreArray.get(index));
 									if ( mementoBackgroundArraySize > 1 ) {
 										mementoBackgroundArray.remove(mementoBackgroundArraySize-1);
 										mementoScoreArray.remove(mementoBackgroundArraySize-1);
@@ -274,13 +285,13 @@ public class Main extends JFrame implements KeyListener {
 										bg.add(bg.getFoundationArray()[i]);
 									}
 
-									scorePanel.setScoreText(score);
-									highScorePanel.setScoreText(highScore);
-									bestTimePanel.setTimeText(playerTime);
+									easyScorePanel.setScoreText(easyScore);
+									easyHighScorePanel.setScoreText(easyHighScore);
+									easyBestTimePanel.setTimeText(easyPlayerTime);
 									bg.add(undoButton);
-									bg.add(scorePanel);
-									bg.add(highScorePanel);
-									bg.add(bestTimePanel);
+									bg.add(easyScorePanel);
+									bg.add(easyHighScorePanel);
+									bg.add(easyBestTimePanel);
 									bg.add(bg.gameTimer);
 									bg.addMouseListener(game);
 									bg.addMouseMotionListener(game);
@@ -296,44 +307,45 @@ public class Main extends JFrame implements KeyListener {
 					}
 				});
 			
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
-				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
-				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
-				bg.add(bestTimePanel);
-				bg.add(highScorePanel);
+				easyBestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + easyPlayerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				easyHighScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + easyHighScore + "</div></html>", 125, 550, 125, 50);
+				easyHighScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				bg.add(easyBestTimePanel);
+				bg.add(easyHighScorePanel);
 				bg.add(undoButton);
 				add(bg);
 				validate();
 			}
-		} else if (a == j) {
-			//sc = new Score();
+
+		/*Hard Mode */
+
 		} else if (a == hard) {
-			if (  bg == null || playerWon == false ) {
+			if ( hardPlayerWon == false ) {
+				if ( bg != null ) {
+					remove(bg);
+				}
+				hardScore = 0;
 				easyHard = 1;
 				remove(st);
 				bg = new Background();
 				
-				scorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + score + "</div></html>", 0, 550, 125, 50);
-				scorePanel.setHorizontalAlignment(SwingConstants.CENTER);
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
-				highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
-				highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				hardScorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + hardScore + "</div></html>", 0, 550, 125, 50);
+				hardScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+
+				bg.add(hardScorePanel);
 				
-				bg.add(bestTimePanel);
-				bg.add(highScorePanel);
-				bg.add(scorePanel);
 				initializePiles(bg);
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				
-				remove(Main.st);
 				add(bg);
-				
 				revalidate();
 			}
+			
 			else {
 				easyHard = 1;
+				hardScore = 0;
 				remove(bg);
 				bg = new Background();
 				initializePiles(bg);
@@ -341,28 +353,36 @@ public class Main extends JFrame implements KeyListener {
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				
-				remove(Main.st);
+				hardScorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + hardScore + "</div></html>", 0, 550, 125, 50);
+				hardScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				hardBestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + hardPlayerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				hardHighScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + hardHighScore + "</div></html>", 125, 550, 125, 50);
+				hardHighScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				
+				bg.add(hardScorePanel);
+				bg.add(hardBestTimePanel);
+				bg.add(hardHighScorePanel);
+		
 				add(bg);
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
-				bg.add(bestTimePanel);
 				revalidate();
 			}
-		} else if(a == vegas) {
-			if (  bg == null ) {
+
+		/*Vegas Mode */
+
+		} else if ( a == vegas ) {
+			if (  vegasPlayerWon == false ) {
+				if ( bg != null ) {
+					remove(bg);
+				}
 				easyHard = 2;
 				remove(st);
 				vegasScore = -52;
 				bg = new Background();
 				initializePiles(bg);
-				System.out.println("sp cards in main at start: " +bg.sp.cards);
+	
 				vegasScorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + vegasScore + "</div></html>", 0, 550, 125, 50);
 				vegasScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 500 , 125, 50, 0);
-				//highScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + highScore + "</div></html>", 125, 550, 125, 50);
-				//highScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
-				
-				bg.add(bestTimePanel);
-				//bg.add(highScorePanel);
+
 				bg.add(vegasScorePanel);
 				CardMoveListener game = new CardMoveListener();
 				bg.addMouseListener(game);
@@ -379,29 +399,26 @@ public class Main extends JFrame implements KeyListener {
 				bg = new Background();
 				initializePiles(bg);
 				CardMoveListener game = new CardMoveListener();
+				vegasScore = -52;
 				bg.addMouseListener(game);
 				bg.addMouseMotionListener(game);
 				
-				remove(Main.st);
+				vegasScorePanel = new ScorePanel("<html><div style='text-align: center;'>Score: " + vegasScore + "</div></html>", 0, 550, 125, 50);
+				vegasScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				vegasBestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + vegasPlayerTime +"</center></html>", 0, 500 , 125, 50, 0);
+				vegasHighScorePanel = new HighScorePanel("<html><div style='text-align: center;'>High Score: " + vegasHighScore + "</div></html>", 125, 550, 125, 50);
+				vegasHighScorePanel.setHorizontalAlignment(SwingConstants.CENTER);
+				
+				bg.add(vegasScorePanel);
+				bg.add(vegasBestTimePanel);
+				bg.add(vegasHighScorePanel);
 				add(bg);
-				bestTimePanel = new BestTimePanel("<html><center>Best Time<br />" + playerTime +"</center></html>", 0, 550 , 125, 50, 0);
-				bg.add(bestTimePanel);
 				revalidate();
 			}
+		
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			System.exit(0);
 		}	
-	}
-	public static int getBestNormalizedTime() {
-		return bestNormalizedTime;
-	}
-
-	public static void setPlayerWon(boolean newPlayerWon) {
-		playerWon = newPlayerWon;
-	}
-
-	public static void setPlayerTime(String newPlayerTime) {
-		playerTime = newPlayerTime;
 	}
 
 	private void initializePiles(Background bg) {
@@ -453,41 +470,124 @@ public class Main extends JFrame implements KeyListener {
 		return bg;
 	}
 
-	public static void increaseScore(int increase) {
-		score += increase;
+	/* Easy mode functions */
+
+	public static int getBestEasyNormalizedTime() {
+		return bestEasyNormalizedTime;
+	}
+	
+	public static void setEasyPlayerWon(boolean newPlayerWon) {
+		easyPlayerWon = newPlayerWon;
 	}
 
-	public static void decreaseScore(int decrease) {
-		score -= decrease;
+	public static void setEasyPlayerTime(String newPlayerTime) {
+		easyPlayerTime = newPlayerTime;
+	}
+	
+	public static void increaseEasyScore(int increase) {
+		easyScore += increase;
 	}
 
-	public static ScorePanel getScorePanel() {
-		return scorePanel;
+	public static void decreaseEasyScore(int decrease) {
+		easyScore -= decrease;
 	}
 
+	public static ScorePanel getEasyScorePanel() {
+		return easyScorePanel;
+	}
+
+	public static void setEasyHighScore(int newHighScore) {
+		easyHighScore = newHighScore;
+	}
+
+	public static int getEasyHighScore() {
+		return easyHighScore;
+	}
+
+	public static int getEasyScore() {
+		return easyScore;
+	}
+
+	public static void setEasyScore(int resetScore) {
+		easyScore = resetScore;
+	}
+
+	/* Hard Mode Functions */
+
+	public static int getBestHardNormalizedTime() {
+		return bestHardNormalizedTime;
+	}
+	
+	
+	public static void setHardPlayerWon(boolean newPlayerWon) {
+		hardPlayerWon = newPlayerWon;
+	}
+
+	public static void setHardPlayerTime(String newPlayerTime) {
+		hardPlayerTime = newPlayerTime;
+	}
+	
+	public static ScorePanel getHardScorePanel() {
+		return hardScorePanel;
+	}
+
+	public static void setHardHighScore(int newHighScore) {
+		hardHighScore = newHighScore;
+	}
+
+	public static int getHardHighScore() {
+		return hardHighScore;
+	}
+
+	public static int getHardScore() {
+		return hardScore;
+	}
+
+	public static void setHardScore(int resetScore) {
+		hardScore = resetScore;
+	}
+
+	public static void increaseHardScore(int increase) {
+		hardScore += increase;
+	}
+
+	/* Vegas Mode Functions */
+	
+	public static int getBestVegasNormalizedTime() {
+		return bestVegasNormalizedTime;
+	}
+
+	public static void setVegasPlayerWon(boolean newPlayerWon) {
+		vegasPlayerWon = newPlayerWon;
+	}
+
+	public static void setVegasPlayerTime(String newPlayerTime) {
+		vegasPlayerTime = newPlayerTime;
+	}
+	
 	public static ScorePanel getVegasScorePanel() {
 		return vegasScorePanel;
 	}
-
-
+	
 	public static void increaseVegasScore(int increase) {
 		vegasScore += increase;
 	}
 
-	public static void setHighScore(int newHighScore) {
-		highScore = newHighScore;
+	public static void setVegasHighScore(int newHighScore) {
+		vegasHighScore = newHighScore;
 	}
 
-	public static int getHighScore() {
-		return highScore;
+	public static int getVegasHighScore() {
+		return vegasHighScore;
 	}
 
-	public static int getScore() {
-		return score;
+	public static int getVegasScore() {
+		return vegasScore;
 	}
 
-	public static void setScore(int resetScore) {
-		score = resetScore;
+	public static void setVegasScore(int resetScore) {
+		vegasScore = resetScore;
 	}
+
 }
 

@@ -21,7 +21,8 @@ public class CardMoveListener extends MouseInputAdapter {
 	public void mousePressed(MouseEvent e) {
 		
 		Background bg = Main.getMainBG();
-		ScorePanel scorePanel = Main.getScorePanel();
+		ScorePanel easyScorePanel = Main.getEasyScorePanel();
+		ScorePanel hardScorePanel = Main.getHardScorePanel();
 		ScorePanel vegasScorePanel = Main.getVegasScorePanel();
 		Component pressed = e.getComponent().getComponentAt(e.getPoint());
 
@@ -41,12 +42,17 @@ public class CardMoveListener extends MouseInputAdapter {
 				for(Foundation foundation : bg.getFoundationArray()) {
 					if( tableaucard.moveTo(foundation, card) ) {
 						if ( Main.easyHard == 0 ) {
-							Main.increaseScore(10);
-							scorePanel.setScoreText(Main.score);	
+							Main.increaseEasyScore(10);
+							easyScorePanel.setScoreText(Main.getEasyScore());	
+						}
+						
+						else if ( Main.easyHard == 1 ) {
+							Main.increaseHardScore(10);
+							hardScorePanel.setScoreText(Main.getHardScore());
 						}
 						else if ( Main.easyHard == 2 ) {
 							Main.increaseVegasScore(10);
-							vegasScorePanel.setScoreText(Main.vegasScore);
+							vegasScorePanel.setScoreText(Main.getVegasScore());
 						} 
 						tableaucard = null;
 						break;
@@ -130,17 +136,21 @@ public class CardMoveListener extends MouseInputAdapter {
 					if ( foundation.moveWaste(tp, card) == true ) {
 						//increase score by 10 points to reflect movement to foundation
 						if ( Main.easyHard == 0 ) {
-							Main.increaseScore(10);
-							scorePanel.setScoreText(Main.score);				
+							Main.increaseEasyScore(10);
+							easyScorePanel.setScoreText(Main.getEasyScore());				
 						}
+						
+						else if ( Main.easyHard==1 ) {
+							Main.increaseHardScore(10);
+							hardScorePanel.setScoreText(Main.getHardScore());
+						}
+						
 						else if ( Main.easyHard==2 ) {
 							Main.increaseVegasScore(5);
-							vegasScorePanel.setScoreText(Main.vegasScore);
+							vegasScorePanel.setScoreText(Main.getVegasScore());
 						}
-						System.out.println("if ( foundation.moveWaste(tp, card) == true )");
 					}
 				}
-			System.out.println("card != null");
 			}
 		}
 		
@@ -151,14 +161,16 @@ public class CardMoveListener extends MouseInputAdapter {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		Background bg = Main.getMainBG();
-		ScorePanel vegasScorePanel = Main.getVegasScorePanel();
 
 		if ( Main.easyHard == 0 ) {
 			Background backgroundMemento = new Background(bg);
 			Main.addToBackgroundArray(backgroundMemento);
 		}
 	
-		ScorePanel scorePanel = Main.getScorePanel();
+		ScorePanel easyScorePanel = Main.getEasyScorePanel();
+		ScorePanel hardScorePanel = Main.getHardScorePanel();
+		ScorePanel vegasScorePanel = Main.getVegasScorePanel();
+		
 		if(card != null) {
 			
 			Component release = e.getComponent().getComponentAt(e.getPoint());
@@ -169,19 +181,24 @@ public class CardMoveListener extends MouseInputAdapter {
 					System.out.println("From talon pile");
 					Tableau tableauCard = (Tableau) release;
 					if(!tp.noCard()) {
-						if(Main.easyHard == 2) {
-							System.out.println("tableau to foundation");
-							Main.increaseVegasScore(5);
-							vegasScorePanel.setScoreText(Main.vegasScore);	
+						if ( Main.easyHard == 0 ) {
+							Main.increaseEasyScore(5);
+							easyScorePanel.setScoreText(Main.getEasyScore());
+							tableauCard.moveWaste(tp, card);
+						}		
+						
+						else if (Main.easyHard == 1) {
+							Main.increaseHardScore(5);
+							vegasScorePanel.setScoreText(Main.getHardScore());	
 							ExtraTalonPile etp = bg.getEtpPile();
 							tableauCard.moveWaste(tp, etp, card);
 						}
-	
-						else if ( Main.easyHard == 0 ) {
-							Main.increaseScore(5);
-							scorePanel.setScoreText(Main.score);
-							tableauCard.moveWaste(tp, card);
-						}			
+						else if (Main.easyHard == 2) {
+							Main.increaseVegasScore(5);
+							vegasScorePanel.setScoreText(Main.getVegasScore());	
+							ExtraTalonPile etp = bg.getEtpPile();
+							tableauCard.moveWaste(tp, etp, card);
+						}
 					}
 					tp.repaint();
 					
@@ -191,7 +208,6 @@ public class CardMoveListener extends MouseInputAdapter {
 					Tableau dest = (Tableau) release;
 					
 					src.moveTo(dest, card);
-					System.out.println("dest: " + dest);
 					src.moveTo(dest, card);
 					src.repaint();
 				}
@@ -206,7 +222,7 @@ public class CardMoveListener extends MouseInputAdapter {
 		}
 		
 		if ( Main.easyHard == 0 ) {
-		Integer scoreMemento = new Integer(Main.score);	
+			Integer scoreMemento = new Integer(Main.getEasyScore());	
 			Main.addToScoreArray(scoreMemento);
 		}
 
@@ -242,6 +258,7 @@ public class CardMoveListener extends MouseInputAdapter {
 				completeFoundations++;
 			}
 		}
+		
 		if ( completeFoundations==4 ) {
 			System.out.println("You won!");
 			gameTimer = bg.getGameTimer();
@@ -249,24 +266,59 @@ public class CardMoveListener extends MouseInputAdapter {
 			String playerTime = gameTimer.getCurrentTime();
 			wp = new WinPanel("<html><center>You won!<br />Your time: " + playerTime + "<br /><br />Press 'e' to start a new game.</center></html>", 250, 300, 250, 125, 0);
 			pressed.getParent().add(wp);
-			if ( Main.getBestNormalizedTime() > gameTimer.getNormalizedTime() ) {
-				Main.bestNormalizedTime = gameTimer.getNormalizedTime();
-				Main.setPlayerWon(true);
-				Main.setPlayerTime(playerTime);
+			
+			if ( Main.easyHard == 0 ) {
+				if ( Main.getBestEasyNormalizedTime() > gameTimer.getNormalizedTime() ) {
+					Main.bestEasyNormalizedTime = gameTimer.getNormalizedTime();
+					Main.setEasyPlayerWon(true);
+					Main.setEasyPlayerTime(playerTime);
+				}
+
+				
+				if ( Main.getEasyScore() > Main.getEasyHighScore()) {
+					int highScore = Integer.valueOf(Main.getEasyScore());
+					Main.setEasyHighScore(highScore);
+					System.out.println("highScore: " + highScore);
+				}
+				
+				return true;
 			}
 
-			
-			if ( Main.getScore() > Main.getHighScore()) {
-				int highScore = Integer.valueOf(Main.getScore());
-				Main.setHighScore(highScore);
-				System.out.println("highScore: " + highScore);
+			else if ( Main.easyHard == 1 ) {
+				if ( Main.getBestHardNormalizedTime() > gameTimer.getNormalizedTime() ) {
+					Main.bestHardNormalizedTime = gameTimer.getNormalizedTime();
+					Main.setHardPlayerWon(true);
+					Main.setHardPlayerTime(playerTime);
+				}
+
+				
+				if ( Main.getHardScore() > Main.getHardHighScore()) {
+					int highScore = Integer.valueOf(Main.getHardScore());
+					Main.setHardHighScore(highScore);
+					System.out.println("highScore: " + highScore);
+				}
+				
+				return true;
 			}
-			
-			return true;	
+
+			else if ( Main.easyHard == 2 ) {
+				if ( Main.getBestVegasNormalizedTime() > gameTimer.getNormalizedTime() ) {
+					Main.bestVegasNormalizedTime = gameTimer.getNormalizedTime();
+					Main.setVegasPlayerWon(true);
+					Main.setVegasPlayerTime(playerTime);
+				}
+
+				
+				if ( Main.getVegasScore() > Main.getHardHighScore()) {
+					int highScore = Integer.valueOf(Main.getVegasScore());
+					Main.setVegasHighScore(highScore);
+					System.out.println("highScore: " + highScore);
+				}
+				
+				return true;
+			}
 		}
-		else {
-			return false;
-		} 
+		return false;
 	}
 	
 	public Stack<Card> getFoundationPile(){
