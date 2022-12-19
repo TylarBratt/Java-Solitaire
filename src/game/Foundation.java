@@ -40,7 +40,9 @@ public class Foundation extends Pile implements Cloneable{
 			if (Main.easyHard == 2) {
 				Background bg = Main.getMainBG();
 				ExtraTalonPile etp = bg.getEtpPile();
-				tp.push(etp.pop());
+				if (!etp.noCard()) {
+					tp.push(etp.pop());
+				}
 				this.topCard().showFace();
 			}
 			tp = null;

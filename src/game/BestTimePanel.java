@@ -1,12 +1,7 @@
 package game;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.*;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import javax.swing.*;
 
 public class BestTimePanel extends JButton{
@@ -33,6 +28,10 @@ public class BestTimePanel extends JButton{
 
 	public int getNormalizedTime() {
 		return this.hours*3600 + this.minutes*60 + this.seconds;
+	}
+
+	public void setTimeText(String playerTime){
+		setText("<html><center>Best Time<br />" + playerTime +"</center></html>");
 	}
 
 }

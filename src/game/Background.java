@@ -26,7 +26,7 @@ public class Background extends JPanel{
 	public Tableau[] tableauArray;
 	public CardMoveListener game;
 	public boolean playerWon = false;
-	
+	public ExtraTalonPile dummyEtp;
 
 	public Background() {
 		super.setLayout(null);
@@ -109,7 +109,14 @@ public class Background extends JPanel{
 	@Override
 	protected void paintComponent(Graphics a) {
 		super.paintComponent(a);
+		Color Gold = new Color(212, 175, 55); // Color gold
+		if(Main.easyHard == 0) {
 		a.setColor(Color.cyan);
+		}else if(Main.easyHard == 1) {
+			a.setColor(Color.green);
+		}else if(Main.easyHard == 2) {
+			a.setColor(Gold);//make this gold.
+		}
 		a.fillRect(0,0,this.getWidth(), this.getHeight());
 	}
 }
