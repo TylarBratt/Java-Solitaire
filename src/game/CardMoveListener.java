@@ -189,9 +189,9 @@ public class CardMoveListener extends MouseInputAdapter {
 						
 						else if (Main.easyHard == 1) {
 							Main.increaseHardScore(5);
-							vegasScorePanel.setScoreText(Main.getHardScore());	
-							ExtraTalonPile etp = bg.getEtpPile();
-							tableauCard.moveWaste(tp, etp, card);
+							hardScorePanel.setScoreText(Main.getHardScore());	
+							
+							tableauCard.moveWaste(tp, card);
 						}
 						else if (Main.easyHard == 2) {
 							Main.increaseVegasScore(5);
